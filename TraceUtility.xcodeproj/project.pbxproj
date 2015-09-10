@@ -1,0 +1,271 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FECBF4831B9D577200D653A7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FECBF4821B9D577200D653A7 /* main.m */; };
+		FECBF4941B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FECBF4921B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework */; };
+		FECBF4951B9D6CE500D653A7 /* InstrumentsPlugIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FECBF47D1B9D577200D653A7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		FE0153E61B9E7E630062C910 /* InstrumentsPrivateHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstrumentsPrivateHeader.h; sourceTree = "<group>"; };
+		FECBF47F1B9D577200D653A7 /* TraceUtility */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TraceUtility; sourceTree = BUILT_PRODUCTS_DIR; };
+		FECBF4821B9D577200D653A7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FECBF4921B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsFoundation.framework; path = /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/DVTInstrumentsFoundation.framework; sourceTree = "<absolute>"; };
+		FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InstrumentsPlugIn.framework; path = /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsPlugIn.framework; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FECBF47C1B9D577200D653A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FECBF4941B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework in Frameworks */,
+				FECBF4951B9D6CE500D653A7 /* InstrumentsPlugIn.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FE0153E51B9E7E370062C910 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FECBF4921B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework */,
+				FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FECBF4761B9D577200D653A7 = {
+			isa = PBXGroup;
+			children = (
+				FECBF4811B9D577200D653A7 /* TraceUtility */,
+				FE0153E51B9E7E370062C910 /* Frameworks */,
+				FECBF4801B9D577200D653A7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FECBF4801B9D577200D653A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FECBF47F1B9D577200D653A7 /* TraceUtility */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FECBF4811B9D577200D653A7 /* TraceUtility */ = {
+			isa = PBXGroup;
+			children = (
+				FE0153E61B9E7E630062C910 /* InstrumentsPrivateHeader.h */,
+				FECBF4821B9D577200D653A7 /* main.m */,
+			);
+			path = TraceUtility;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FECBF47E1B9D577200D653A7 /* TraceUtility */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FECBF4861B9D577200D653A7 /* Build configuration list for PBXNativeTarget "TraceUtility" */;
+			buildPhases = (
+				FECBF47B1B9D577200D653A7 /* Sources */,
+				FECBF47C1B9D577200D653A7 /* Frameworks */,
+				FECBF47D1B9D577200D653A7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TraceUtility;
+			productName = TraceUtility;
+			productReference = FECBF47F1B9D577200D653A7 /* TraceUtility */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FECBF4771B9D577200D653A7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = Qusic;
+				TargetAttributes = {
+					FECBF47E1B9D577200D653A7 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = FECBF47A1B9D577200D653A7 /* Build configuration list for PBXProject "TraceUtility" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FECBF4761B9D577200D653A7;
+			productRefGroup = FECBF4801B9D577200D653A7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FECBF47E1B9D577200D653A7 /* TraceUtility */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FECBF47B1B9D577200D653A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FECBF4831B9D577200D653A7 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		FECBF4841B9D577200D653A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "/Applications/Xcode.app/Contents/SharedFrameworks /Applications/Xcode.app/Contents/OtherFrameworks /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks /Applications/Xcode.app/Contents/Developer/Library/Frameworks /Applications/Xcode.app/Contents/Developer/Library/PrivateFrameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		FECBF4851B9D577200D653A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "/Applications/Xcode.app/Contents/SharedFrameworks /Applications/Xcode.app/Contents/OtherFrameworks /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks /Applications/Xcode.app/Contents/Developer/Library/Frameworks /Applications/Xcode.app/Contents/Developer/Library/PrivateFrameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		FECBF4871B9D577200D653A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FECBF4881B9D577200D653A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FECBF47A1B9D577200D653A7 /* Build configuration list for PBXProject "TraceUtility" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FECBF4841B9D577200D653A7 /* Debug */,
+				FECBF4851B9D577200D653A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FECBF4861B9D577200D653A7 /* Build configuration list for PBXNativeTarget "TraceUtility" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FECBF4871B9D577200D653A7 /* Debug */,
+				FECBF4881B9D577200D653A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FECBF4771B9D577200D653A7 /* Project object */;
+}

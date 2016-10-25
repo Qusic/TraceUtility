@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3086E15E1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */; };
+		3086E1601DBEFE7A00FA1F92 /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */; };
 		FECBF4831B9D577200D653A7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FECBF4821B9D577200D653A7 /* main.m */; };
-		FECBF4941B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FECBF4921B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework */; };
 		FECBF4951B9D6CE500D653A7 /* InstrumentsPlugIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */; };
 /* End PBXBuildFile section */
 
@@ -25,10 +26,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTInstrumentsFoundation.framework; sourceTree = "<group>"; };
+		3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework; sourceTree = "<group>"; };
 		FE0153E61B9E7E630062C910 /* InstrumentsPrivateHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstrumentsPrivateHeader.h; sourceTree = "<group>"; };
 		FECBF47F1B9D577200D653A7 /* TraceUtility */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TraceUtility; sourceTree = BUILT_PRODUCTS_DIR; };
 		FECBF4821B9D577200D653A7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		FECBF4921B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsFoundation.framework; path = /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/DVTInstrumentsFoundation.framework; sourceTree = "<absolute>"; };
 		FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InstrumentsPlugIn.framework; path = /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsPlugIn.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -37,7 +39,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FECBF4941B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework in Frameworks */,
+				3086E1601DBEFE7A00FA1F92 /* DVTFoundation.framework in Frameworks */,
+				3086E15E1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework in Frameworks */,
 				FECBF4951B9D6CE500D653A7 /* InstrumentsPlugIn.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,7 +51,8 @@
 		FE0153E51B9E7E370062C910 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FECBF4921B9D6CE500D653A7 /* DVTInstrumentsFoundation.framework */,
+				3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */,
+				3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */,
 				FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */,
 			);
 			name = Frameworks;
@@ -106,7 +110,7 @@
 		FECBF4771B9D577200D653A7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = Qusic;
 				TargetAttributes = {
 					FECBF47E1B9D577200D653A7 = {
@@ -156,13 +160,20 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/SharedFrameworks",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -178,7 +189,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "/Applications/Xcode.app/Contents/SharedFrameworks /Applications/Xcode.app/Contents/OtherFrameworks /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks /Applications/Xcode.app/Contents/Developer/Library/Frameworks /Applications/Xcode.app/Contents/Developer/Library/PrivateFrameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(SYSTEM_APPS_DIR)/Xcode.app/Contents/SharedFrameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/OtherFrameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/PrivateFrameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -199,14 +210,20 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/SharedFrameworks",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -215,7 +232,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "/Applications/Xcode.app/Contents/SharedFrameworks /Applications/Xcode.app/Contents/OtherFrameworks /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks /Applications/Xcode.app/Contents/Developer/Library/Frameworks /Applications/Xcode.app/Contents/Developer/Library/PrivateFrameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(SYSTEM_APPS_DIR)/Xcode.app/Contents/SharedFrameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/OtherFrameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks $(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/PrivateFrameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -225,10 +242,6 @@
 		FECBF4871B9D577200D653A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -236,10 +249,6 @@
 		FECBF4881B9D577200D653A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

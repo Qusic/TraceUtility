@@ -12,10 +12,21 @@
 extern "C" {
 #endif
     NSString *PFTDeveloperDirectory(void);
-    void PFTLoadPlugins(void);
+    void DVTInitializeSharedFrameworks(void);
+    BOOL PFTLoadPlugins(void);
 #ifdef __cplusplus
 }
 #endif
+
+@interface DVTDeveloperPaths : NSObject
++ (NSString *)applicationDirectoryName;
++ (void)initializeApplicationDirectoryName:(NSString *)name;
+@end
+
+@interface XRInternalizedSettingsStore : NSObject
++ (NSDictionary *)internalizedSettings;
++ (void)configureWithAdditionalURLs:(NSArray *)urls;
+@end
 
 @interface PFTCallTreeNode : NSObject
 - (NSString *)libraryName;
@@ -44,7 +55,17 @@ extern "C" {
 - (void)refreshTreeRoot;
 @end
 
+@interface XRDevice : NSObject
+- (NSString *)deviceIdentifier;
+- (NSString *)deviceDisplayName;
+- (NSString *)deviceDescription;
+- (NSString *)productType;
+- (NSString *)productVersion;
+- (NSString *)buildVersion;
+@end
+
 @interface XRRun : NSObject
+- (XRDevice *)device;
 - (NSInteger)runNumber;
 - (NSString *)displayName;
 - (NSTimeInterval)startTime;
@@ -67,27 +88,8 @@ extern "C" {
 - (NSString *)category;
 @end
 
-@interface XRDevice : NSObject
-- (NSString *)deviceIdentifier;
-- (NSString *)deviceDisplayName;
-- (NSString *)deviceDescription;
-- (NSString *)productType;
-- (NSString *)productVersion;
-- (NSString *)buildVersion;
-@end
-
-@interface PFTProcess : NSObject
-- (NSString *)bundleIdentifier;
-- (NSString *)displayName;
-- (NSString *)executablePath;
-- (NSArray *)arguments;
-- (NSDictionary *)environment;
-- (XRDevice *)device;
-@end
-
 @interface XRInstrument : NSObject
 - (PFTInstrumentType *)type;
-- (PFTProcess *)target;
 - (NSArray *)allRuns;
 @end
 

@@ -55,6 +55,9 @@ extern "C" {
 - (void)refreshTreeRoot;
 @end
 
+@interface XRAnalysisCore : NSObject
+@end
+
 @interface XRDevice : NSObject
 - (NSString *)deviceIdentifier;
 - (NSString *)deviceDisplayName;
@@ -102,6 +105,8 @@ extern "C" {
 - (PFTInstrumentList *)basicInstruments;
 - (PFTInstrumentList *)recordingInstruments;
 - (XRRunListData *)runData;
+- (XRAnalysisCore *)coreForRunNumber:(NSInteger)runNumber;
+- (void)awakeFromTemplate;
 - (BOOL)saveDocument:(NSURL *)documentURL saveAllRuns:(BOOL)saveAllRuns error:(NSError **)errpt;
 - (BOOL)loadDocument:(NSURL *)documentURL error:(NSError **)errpt;
 - (void)close;

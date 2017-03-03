@@ -55,7 +55,22 @@ extern "C" {
 - (void)refreshTreeRoot;
 @end
 
+@interface XRMultiProcessBacktraceRepository : XRBacktraceRepository
+@end
+
+@interface XRAnalysisCoreTableSpec : NSObject
+@end
+
+@interface XRAnalysisCoreTableSchema : NSObject
+@end
+
+@interface XRAnalysisCoreTable : NSObject
+- (XRAnalysisCoreTableSpec *)spec;
+- (XRAnalysisCoreTableSchema *)schema;
+@end
+
 @interface XRAnalysisCore : NSObject
+- (void)enumerateTables:(void (^)(UInt32 identifier, XRAnalysisCoreTable *table))block;
 @end
 
 @interface XRDevice : NSObject
@@ -73,10 +88,6 @@ extern "C" {
 - (NSString *)displayName;
 - (NSTimeInterval)startTime;
 - (NSTimeInterval)endTime;
-@end
-
-@interface XRSamplerRun : XRRun
-- (XRBacktraceRepository *)backtraceRepository;
 @end
 
 @interface XRRunListData : NSObject

@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Qusic. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,13 +28,110 @@ extern "C" {
 + (void)configureWithAdditionalURLs:(NSArray *)urls;
 @end
 
+@interface XRRun : NSObject
+- (NSInteger)runNumber;
+- (NSString *)displayName;
+- (NSTimeInterval)startTime;
+- (NSTimeInterval)endTime;
+@end
+
+@interface PFTInstrumentType : NSObject
+- (NSString *)uuid;
+- (NSString *)name;
+- (NSString *)category;
+@end
+
+@protocol XRInstrumentViewController;
+
+@interface XRInstrument : NSObject
+- (PFTInstrumentType *)type;
+- (NSArray<XRRun *> *)allRuns;
+- (id<XRInstrumentViewController>)viewController;
+- (void)setViewController:(id<XRInstrumentViewController>)viewController;
+@end
+
+@interface PFTInstrumentList : NSObject
+- (NSArray<XRInstrument *> *)allInstruments;
+@end
+
+@interface XRTrace : NSObject
+- (PFTInstrumentList *)basicInstruments;
+- (PFTInstrumentList *)recordingInstruments;
+@end
+
+@interface XRDevice : NSObject
+- (NSString *)deviceIdentifier;
+- (NSString *)deviceDisplayName;
+- (NSString *)deviceDescription;
+- (NSString *)productType;
+- (NSString *)productVersion;
+- (NSString *)buildVersion;
+@end
+
+@interface PFTProcess : NSObject
+- (NSString *)bundleIdentifier;
+- (NSString *)processName;
+- (NSString *)displayName;
+@end
+
+@interface PFTTraceDocument : NSDocument
+- (XRTrace *)trace;
+- (XRDevice *)targetDevice;
+- (PFTProcess *)defaultProcess;
+@end
+
+@interface PFTDocumentController : NSDocumentController
+@end
+
+@protocol XRContextContainer;
+
+@interface XRContext : NSObject
+- (NSString *)label;
+- (id<NSCoding>)value;
+- (id<XRContextContainer>)container;
+- (instancetype)parentContext;
+- (instancetype)rootContext;
+@end
+
+@protocol XRContextContainer <NSObject>
+- (XRContext *)contextRepresentation;
+@end
+
+@protocol XRFilteredDataSource <NSObject>
+@end
+
+@protocol XRAnalysisCoreViewSubcontroller <XRContextContainer, XRFilteredDataSource>
+@end
+
+@interface XRAnalysisCoreDetailViewController : NSViewController <XRAnalysisCoreViewSubcontroller>
+- (void)_afterRebuildingUIPerformBlock:(void (^)(void))block;
+@end
+
+@protocol XRInstrumentViewController <NSObject>
+- (id<XRFilteredDataSource>)detailFilteredDataSource;
+- (void)instrumentDidChangeSwitches;
+- (void)instrumentChangedTableRequirements;
+- (void)instrumentWillBecomeInvalid;
+- (void)documentSetInspectionTime:(NSUInteger)time; // in nanoseconds
+@end
+
+@interface XRAnalysisCoreStandardController : NSObject <XRInstrumentViewController>
+- (instancetype)initWithInstrument:(XRInstrument *)instrument document:(PFTTraceDocument *)document;
+- (XRAnalysisCoreDetailViewController *)detailFilteredDataSource;
+@end
+
+@interface XRCallTreeDetailView : NSView
+@end
+
+//TODO
+
 @interface PFTCallTreeNode : NSObject
 - (NSString *)libraryName;
 - (NSString *)symbolName;
 - (NSUInteger)address;
 - (NSArray *)symbolNamePath; // Call stack
-- (PFTCallTreeNode *)root;
-- (PFTCallTreeNode *)parent;
+- (instancetype)root;
+- (instancetype)parent;
 - (NSArray *)children;
 - (int)numberChildren;
 - (int)terminals; // An integer value of this node, such as self running time in millisecond.
@@ -56,69 +153,4 @@ extern "C" {
 @end
 
 @interface XRMultiProcessBacktraceRepository : XRBacktraceRepository
-@end
-
-@interface XRAnalysisCoreTableSpec : NSObject
-@end
-
-@interface XRAnalysisCoreTableSchema : NSObject
-@end
-
-@interface XRAnalysisCoreTable : NSObject
-- (XRAnalysisCoreTableSpec *)spec;
-- (XRAnalysisCoreTableSchema *)schema;
-@end
-
-@interface XRAnalysisCore : NSObject
-- (void)enumerateTables:(void (^)(UInt32 identifier, XRAnalysisCoreTable *table))block;
-@end
-
-@interface XRDevice : NSObject
-- (NSString *)deviceIdentifier;
-- (NSString *)deviceDisplayName;
-- (NSString *)deviceDescription;
-- (NSString *)productType;
-- (NSString *)productVersion;
-- (NSString *)buildVersion;
-@end
-
-@interface XRRun : NSObject
-- (XRDevice *)device;
-- (NSInteger)runNumber;
-- (NSString *)displayName;
-- (NSTimeInterval)startTime;
-- (NSTimeInterval)endTime;
-@end
-
-@interface XRRunListData : NSObject
-- (NSDictionary *)runData;
-- (NSArray *)runNumbers;
-- (NSDictionary *)dataForAllRuns;
-@end
-
-@interface PFTInstrumentType : NSObject
-- (NSString *)uuid;
-- (NSString *)name;
-- (NSString *)category;
-@end
-
-@interface XRInstrument : NSObject
-- (PFTInstrumentType *)type;
-- (NSArray *)allRuns;
-@end
-
-@interface PFTInstrumentList : NSObject
-- (NSArray *)allInstruments;
-@end
-
-@interface XRTrace : NSObject
-- (instancetype)initForCommandLine:(BOOL)commandLine;
-- (PFTInstrumentList *)basicInstruments;
-- (PFTInstrumentList *)recordingInstruments;
-- (XRRunListData *)runData;
-- (XRAnalysisCore *)coreForRunNumber:(NSInteger)runNumber;
-- (void)awakeFromTemplate;
-- (BOOL)saveDocument:(NSURL *)documentURL saveAllRuns:(BOOL)saveAllRuns error:(NSError **)errpt;
-- (BOOL)loadDocument:(NSURL *)documentURL error:(NSError **)errpt;
-- (void)close;
 @end

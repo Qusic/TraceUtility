@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3025618C1E71472F005DF7FF /* InstrumentsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3025618B1E71472F005DF7FF /* InstrumentsKit.framework */; };
 		3086E15E1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */; };
 		3086E1601DBEFE7A00FA1F92 /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */; };
 		FECBF4831B9D577200D653A7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FECBF4821B9D577200D653A7 /* main.m */; };
@@ -26,6 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3025618B1E71472F005DF7FF /* InstrumentsKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InstrumentsKit.framework; path = ../../../../Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsKit.framework; sourceTree = "<group>"; };
 		3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTInstrumentsFoundation.framework; sourceTree = "<group>"; };
 		3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework; sourceTree = "<group>"; };
 		FE0153E61B9E7E630062C910 /* InstrumentsPrivateHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstrumentsPrivateHeader.h; sourceTree = "<group>"; };
@@ -42,6 +44,7 @@
 				3086E1601DBEFE7A00FA1F92 /* DVTFoundation.framework in Frameworks */,
 				3086E15E1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework in Frameworks */,
 				FECBF4951B9D6CE500D653A7 /* InstrumentsPlugIn.framework in Frameworks */,
+				3025618C1E71472F005DF7FF /* InstrumentsKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +57,7 @@
 				3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */,
 				3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */,
 				FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */,
+				3025618B1E71472F005DF7FF /* InstrumentsKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

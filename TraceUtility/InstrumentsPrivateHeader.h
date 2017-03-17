@@ -112,18 +112,12 @@ extern "C" {
 - (void)instrumentDidChangeSwitches;
 - (void)instrumentChangedTableRequirements;
 - (void)instrumentWillBecomeInvalid;
-- (void)documentSetInspectionTime:(NSUInteger)time; // in nanoseconds
 @end
 
 @interface XRAnalysisCoreStandardController : NSObject <XRInstrumentViewController>
 - (instancetype)initWithInstrument:(XRInstrument *)instrument document:(PFTTraceDocument *)document;
 - (XRAnalysisCoreDetailViewController *)detailFilteredDataSource;
 @end
-
-@interface XRCallTreeDetailView : NSView
-@end
-
-//TODO
 
 @interface PFTCallTreeNode : NSObject
 - (NSString *)libraryName;
@@ -149,8 +143,11 @@ extern "C" {
 
 @interface XRBacktraceRepository : NSObject
 - (PFTCallTreeNode *)rootNode;
-- (void)refreshTreeRoot;
 @end
 
 @interface XRMultiProcessBacktraceRepository : XRBacktraceRepository
+@end
+
+@interface XRCallTreeDetailView : NSView
+- (XRBacktraceRepository *)backtraceRepository;
 @end

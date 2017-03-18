@@ -64,7 +64,6 @@ int main(int argc, const char * argv[]) {
                 // Here are some straightforward example code demonstrating how to process the data from several commonly used instruments.
                 NSString *instrumentID = instrument.type.uuid;
                 if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coresampler2"]) {
-                    continue;
                     // Time Profiler: print out all functions in descending order of self execution time.
                     XRCallTreeDetailView *callTreeView = (XRCallTreeDetailView *)container;
                     XRBacktraceRepository *backtraceRepository = callTreeView.backtraceRepository;
@@ -86,6 +85,7 @@ int main(int argc, const char * argv[]) {
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.oa"]) {
                     // Allocations:
                     XRObjectAllocInstrument *allocInstrument = (XRObjectAllocInstrument *)container;
+                    TUPrint(@"");
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coreanimation"]) {
                     continue;
                     // Core Animation:

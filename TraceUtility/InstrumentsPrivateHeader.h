@@ -28,11 +28,13 @@ extern "C" {
 + (void)configureWithAdditionalURLs:(NSArray *)urls;
 @end
 
+typedef NSUInteger XRTime; // in nanoseconds
+typedef struct { XRTime start, length; } XRTimeRange;
+
 @interface XRRun : NSObject
 - (NSInteger)runNumber;
 - (NSString *)displayName;
-- (NSTimeInterval)startTime;
-- (NSTimeInterval)endTime;
+- (XRTimeRange)timeRange;
 @end
 
 @interface PFTInstrumentType : NSObject
@@ -45,9 +47,11 @@ extern "C" {
 
 @interface XRInstrument : NSObject
 - (PFTInstrumentType *)type;
-- (NSArray<XRRun *> *)allRuns;
 - (id<XRInstrumentViewController>)viewController;
 - (void)setViewController:(id<XRInstrumentViewController>)viewController;
+- (NSArray<XRRun *> *)allRuns;
+- (XRRun *)currentRun;
+- (void)setCurrentRun:(XRRun *)run;
 @end
 
 @interface PFTInstrumentList : NSObject
@@ -104,10 +108,10 @@ extern "C" {
 @end
 
 @interface XRAnalysisCoreDetailViewController : NSViewController <XRAnalysisCoreViewSubcontroller>
-- (void)_afterRebuildingUIPerformBlock:(void (^)(void))block;
 @end
 
 @protocol XRInstrumentViewController <NSObject>
+- (id<XRContextContainer>)detailContextContainer;
 - (id<XRFilteredDataSource>)detailFilteredDataSource;
 - (void)instrumentDidChangeSwitches;
 - (void)instrumentChangedTableRequirements;
@@ -116,7 +120,6 @@ extern "C" {
 
 @interface XRAnalysisCoreStandardController : NSObject <XRInstrumentViewController>
 - (instancetype)initWithInstrument:(XRInstrument *)instrument document:(PFTTraceDocument *)document;
-- (XRAnalysisCoreDetailViewController *)detailFilteredDataSource;
 @end
 
 @interface PFTCallTreeNode : NSObject
@@ -150,4 +153,10 @@ extern "C" {
 
 @interface XRCallTreeDetailView : NSView
 - (XRBacktraceRepository *)backtraceRepository;
+@end
+
+@interface XRLegacyInstrument : XRInstrument <XRInstrumentViewController, XRContextContainer>
+@end
+
+@interface XRObjectAllocInstrument : XRLegacyInstrument
 @end

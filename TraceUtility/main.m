@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
         [PFTDocumentController sharedDocumentController];
 
         // Open a trace document.
-        NSString *tracePath = @"/Users/qusic/Downloads/Instruments.trace";
+        NSString *tracePath = NSProcessInfo.processInfo.arguments[1];
         NSError *error = nil;
         PFTTraceDocument *document = [[PFTTraceDocument alloc]initWithContentsOfURL:[NSURL fileURLWithPath:tracePath] ofType:@"Trace Document" error:&error];
         if (error) {

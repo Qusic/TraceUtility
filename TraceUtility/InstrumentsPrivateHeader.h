@@ -95,10 +95,12 @@ typedef struct { XRTime start, length; } XRTimeRange;
 - (id<XRContextContainer>)container;
 - (instancetype)parentContext;
 - (instancetype)rootContext;
+- (void)display;
 @end
 
 @protocol XRContextContainer <NSObject>
 - (XRContext *)contextRepresentation;
+- (void)displayContext:(XRContext *)context;
 @end
 
 @protocol XRFilteredDataSource <NSObject>
@@ -151,6 +153,9 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @interface XRMultiProcessBacktraceRepository : XRBacktraceRepository
 @end
 
+@interface XRManagedEventArrayController : NSArrayController
+@end
+
 @interface XRCallTreeDetailView : NSView
 - (XRBacktraceRepository *)backtraceRepository;
 @end
@@ -158,5 +163,13 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @interface XRLegacyInstrument : XRInstrument <XRInstrumentViewController, XRContextContainer>
 @end
 
-@interface XRObjectAllocInstrument : XRLegacyInstrument
+@interface XRObjectAllocEventViewController : NSObject {
+    XRManagedEventArrayController *_ac;
+}
+@end
+
+@interface XRObjectAllocInstrument : XRLegacyInstrument {
+    XRObjectAllocEventViewController *_objectListController;
+}
+- (NSView *)_objectListView;
 @end

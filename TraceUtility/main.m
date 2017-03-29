@@ -7,8 +7,10 @@
 //
 
 #import "InstrumentsPrivateHeader.h"
+#import <objc/runtime.h>
 
 #define TUPrint(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__])
+#define TUIvar(object, name) (__bridge id)*(void **)&((char *)(__bridge void *)object)[ivar_getOffset(class_getInstanceVariable(object_getClass(object), #name))]
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -67,7 +69,7 @@ int main(int argc, const char * argv[]) {
                     // Time Profiler: print out all functions in descending order of self execution time.
                     XRCallTreeDetailView *callTreeView = (XRCallTreeDetailView *)container;
                     XRBacktraceRepository *backtraceRepository = callTreeView.backtraceRepository;
-                    static NSMutableArray * (^ const flattenTree)(PFTCallTreeNode *) = ^(PFTCallTreeNode *rootNode) {
+                    static NSMutableArray * (^ const flattenTree)(PFTCallTreeNode *) = ^(PFTCallTreeNode *rootNode) { // Helper function to collect all tree nodes.
                         NSMutableArray *nodes = [NSMutableArray array];
                         if (rootNode) {
                             [nodes addObject:rootNode];
@@ -85,6 +87,8 @@ int main(int argc, const char * argv[]) {
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.oa"]) {
                     // Allocations:
                     XRObjectAllocInstrument *allocInstrument = (XRObjectAllocInstrument *)container;
+                    (void)allocInstrument._objectListView; // This call initializes _objectListController.
+                    XRManagedEventArrayController *arrayController = TUIvar(TUIvar(allocInstrument, _objectListController), _ac);
                     TUPrint(@"");
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coreanimation"]) {
                     continue;

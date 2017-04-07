@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
                     // Time Profiler: print out all functions in descending order of self execution time.
                     XRCallTreeDetailView *callTreeView = (XRCallTreeDetailView *)container;
                     XRBacktraceRepository *backtraceRepository = callTreeView.backtraceRepository;
-                    static NSMutableArray * (^ const flattenTree)(PFTCallTreeNode *) = ^(PFTCallTreeNode *rootNode) { // Helper function to collect all tree nodes.
+                    static NSMutableArray<PFTCallTreeNode *> * (^ const flattenTree)(PFTCallTreeNode *) = ^(PFTCallTreeNode *rootNode) { // Helper function to collect all tree nodes.
                         NSMutableArray *nodes = [NSMutableArray array];
                         if (rootNode) {
                             [nodes addObject:rootNode];
@@ -79,25 +79,33 @@ int main(int argc, const char * argv[]) {
                         }
                         return nodes;
                     };
-                    NSMutableArray *nodes = flattenTree(backtraceRepository.rootNode);
+                    NSMutableArray<PFTCallTreeNode *> *nodes = flattenTree(backtraceRepository.rootNode);
                     [nodes sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:NSStringFromSelector(@selector(terminals)) ascending:NO]]];
                     for (PFTCallTreeNode *node in nodes) {
                         TUPrint(@"%@ %@ %ims\n", node.libraryName, node.symbolName, node.terminals);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.oa"]) {
-                    // Allocations:
+                    // Allocations: print out the memory allocated during each second in descending order of the size.
                     XRObjectAllocInstrument *allocInstrument = (XRObjectAllocInstrument *)container;
-                    (void)allocInstrument._objectListView; // This call initializes _objectListController.
+                    [allocInstrument._topLevelContexts[2] display]; // Four contexts: Statistics, Call Trees, Allocations List, Generations.
                     XRManagedEventArrayController *arrayController = TUIvar(TUIvar(allocInstrument, _objectListController), _ac);
-                    TUPrint(@"");
+                    NSMutableDictionary<NSNumber *, NSNumber *> *sizeGroupedByTime = [NSMutableDictionary dictionary];
+                    for (XRObjectAllocEvent *event in arrayController.arrangedObjects) {
+                        NSNumber *time = @(event.timestamp / NSEC_PER_SEC);
+                        NSNumber *size = @(sizeGroupedByTime[time].intValue + event.size);
+                        sizeGroupedByTime[time] = size;
+                    }
+                    NSArray<NSNumber *> *sortedTime = [sizeGroupedByTime.allKeys sortedArrayUsingComparator:^(NSNumber *time1, NSNumber *time2) {
+                        return [sizeGroupedByTime[time2] compare:sizeGroupedByTime[time1]];
+                    }];
+                    for (NSNumber *time in sortedTime) {
+                        TUPrint(@"#%@ %@Bytes\n", time, sizeGroupedByTime[time]);
+                    }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coreanimation"]) {
-                    continue;
                     // Core Animation:
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.networking"]) {
-                    continue;
                     // Connections:
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.power.mobile.energy"]) {
-                    continue;
                     // Energy Usage Log:
                 } else {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");

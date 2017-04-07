@@ -28,11 +28,11 @@ extern "C" {
 + (void)configureWithAdditionalURLs:(NSArray *)urls;
 @end
 
-typedef NSUInteger XRTime; // in nanoseconds
+typedef UInt64 XRTime; // in nanoseconds
 typedef struct { XRTime start, length; } XRTimeRange;
 
 @interface XRRun : NSObject
-- (NSInteger)runNumber;
+- (SInt64)runNumber;
 - (NSString *)displayName;
 - (XRTimeRange)timeRange;
 @end
@@ -127,23 +127,23 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @interface PFTCallTreeNode : NSObject
 - (NSString *)libraryName;
 - (NSString *)symbolName;
-- (NSUInteger)address;
+- (UInt64)address;
 - (NSArray *)symbolNamePath; // Call stack
 - (instancetype)root;
 - (instancetype)parent;
 - (NSArray *)children;
-- (int)numberChildren;
-- (int)terminals; // An integer value of this node, such as self running time in millisecond.
-- (int)count; // Total value of all nodes of the subtree whose root node is this node. It means that if you increase terminals by a value, count will also be increased by the same value, and that the value of count is calculated automatically and you connot modify it.
-- (NSUInteger)weightCount; // Count of different kinds of double values;
-- (double)selfWeight:(NSUInteger)index; // A double value similar to terminal at the specific index.
-- (double)weight:(NSUInteger)index; // A double value similar to count at the specific index. The difference is that you decide how weigh should be calculated.
-- (double)selfCountPercent; // self.terminal / root.count
-- (double)totalCountPercent; // self.count / root.count
-- (double)parentCountPercent; // parent.count / root.count
-- (double)selfWeightPercent:(NSUInteger)index; // self.selfWeight / root.weight
-- (double)totalWeightPercent:(NSUInteger)index; // self.weight / root.weight
-- (double)parentWeightPercent:(NSUInteger)index; // parent.weight / root.weight
+- (SInt32)numberChildren;
+- (SInt32)terminals; // An integer value of this node, such as self running time in millisecond.
+- (SInt32)count; // Total value of all nodes of the subtree whose root node is this node. It means that if you increase terminals by a value, count will also be increased by the same value, and that the value of count is calculated automatically and you connot modify it.
+- (UInt64)weightCount; // Count of different kinds of double values;
+- (Float64)selfWeight:(UInt64)index; // A double value similar to terminal at the specific index.
+- (Float64)weight:(UInt64)index; // A double value similar to count at the specific index. The difference is that you decide how weigh should be calculated.
+- (Float64)selfCountPercent; // self.terminal / root.count
+- (Float64)totalCountPercent; // self.count / root.count
+- (Float64)parentCountPercent; // parent.count / root.count
+- (Float64)selfWeightPercent:(UInt64)index; // self.selfWeight / root.weight
+- (Float64)totalWeightPercent:(UInt64)index; // self.weight / root.weight
+- (Float64)parentWeightPercent:(UInt64)index; // parent.weight / root.weight
 @end
 
 @interface XRBacktraceRepository : NSObject
@@ -163,6 +163,30 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @interface XRLegacyInstrument : XRInstrument <XRInstrumentViewController, XRContextContainer>
 @end
 
+@interface XRRawBacktrace : NSObject
+@end
+
+@interface XRManagedEvent : NSObject
+- (UInt32)identifier;
+@end
+
+@interface XRObjectAllocEvent : XRManagedEvent
+- (UInt32)allocationEvent;
+- (UInt32)destructionEvent;
+- (UInt32)pastEvent;
+- (UInt32)futureEvent;
+- (BOOL)isAliveThroughIdentifier:(UInt32)identifier;
+- (NSString *)eventTypeName;
+- (NSString *)categoryName;
+- (XRTime)timestamp; // Time elapsed from the beginning of the run.
+- (SInt32)size; // in bytes
+- (SInt32)delta; // in bytes
+- (UInt64)address;
+- (UInt64)slot;
+- (UInt64)data;
+- (XRRawBacktrace *)backtrace;
+@end
+
 @interface XRObjectAllocEventViewController : NSObject {
     XRManagedEventArrayController *_ac;
 }
@@ -171,5 +195,5 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @interface XRObjectAllocInstrument : XRLegacyInstrument {
     XRObjectAllocEventViewController *_objectListController;
 }
-- (NSView *)_objectListView;
+- (NSArray<XRContext *> *)_topLevelContexts;
 @end

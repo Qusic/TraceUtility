@@ -59,8 +59,7 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @end
 
 @interface XRTrace : NSObject
-- (PFTInstrumentList *)basicInstruments;
-- (PFTInstrumentList *)recordingInstruments;
+- (PFTInstrumentList *)allInstrumentsList;
 @end
 
 @interface XRDevice : NSObject

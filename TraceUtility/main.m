@@ -42,7 +42,7 @@ int main(int argc, const char * argv[]) {
 
         // Each trace document consists of data from several different instruments.
         XRTrace *trace = document.trace;
-        for (XRInstrument *instrument in trace.basicInstruments.allInstruments) {
+        for (XRInstrument *instrument in trace.allInstrumentsList.allInstruments) {
             TUPrint(@"\nInstrument: %@ (%@)\n", instrument.type.name, instrument.type.uuid);
 
             // Common routine to obtain the data container.

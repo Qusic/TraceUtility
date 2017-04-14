@@ -196,3 +196,11 @@ typedef struct { XRTime start, length; } XRTimeRange;
 }
 - (NSArray<XRContext *> *)_topLevelContexts;
 @end
+
+@interface XRVideoCardRun : XRRun {
+    NSArrayController *_controller;
+}
+@end
+
+@interface XRVideoCardInstrument : XRLegacyInstrument
+@end

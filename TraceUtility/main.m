@@ -102,7 +102,13 @@ int main(int argc, const char * argv[]) {
                         TUPrint(@"#%@ %@Bytes\n", time, sizeGroupedByTime[time]);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coreanimation"]) {
-                    // Core Animation:
+                    // Core Animation: print out all FPS data samples.
+                    NSArrayController *arrayController = TUIvar(run, _controller);
+                    for (NSDictionary *sample in arrayController.arrangedObjects) {
+                        NSNumber *fps = sample[@"FramesPerSecond"];
+                        UInt64 timestamp = [sample[@"XRVideoCardRunTimeStamp"] integerValue] / USEC_PER_SEC;
+                        TUPrint(@"#%@ %@FPS\n", @(timestamp), fps);
+                    }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.networking"]) {
                     // Connections:
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.power.mobile.energy"]) {

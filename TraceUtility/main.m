@@ -10,7 +10,8 @@
 #import <objc/runtime.h>
 
 #define TUPrint(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__])
-#define TUIvar(object, name) (__bridge id)*(void **)&((char *)(__bridge void *)object)[ivar_getOffset(class_getInstanceVariable(object_getClass(object), #name))]
+#define TUIvarCast(object, name, type) (*(type *)(void *)&((char *)(__bridge void *)object)[ivar_getOffset(class_getInstanceVariable(object_getClass(object), #name))])
+#define TUIvar(object, name) TUIvarCast(object, name, id const)
 
 // Workaround to fix search paths for Instruments plugins and packages.
 static NSBundle *(*NSBundle_mainBundle_original)(id self, SEL _cmd);
@@ -99,7 +100,7 @@ int main(int argc, const char * argv[]) {
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.oa"]) {
                     // Allocations: print out the memory allocated during each second in descending order of the size.
                     XRObjectAllocInstrument *allocInstrument = (XRObjectAllocInstrument *)container;
-                    [allocInstrument._topLevelContexts[2] display]; // Four contexts: Statistics, Call Trees, Allocations List, Generations.
+                    [allocInstrument._topLevelContexts[2] display]; // 4 contexts: Statistics, Call Trees, Allocations List, Generations.
                     XRManagedEventArrayController *arrayController = TUIvar(TUIvar(allocInstrument, _objectListController), _ac);
                     NSMutableDictionary<NSNumber *, NSNumber *> *sizeGroupedByTime = [NSMutableDictionary dictionary];
                     for (XRObjectAllocEvent *event in arrayController.arrangedObjects) {
@@ -115,7 +116,8 @@ int main(int argc, const char * argv[]) {
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coreanimation"]) {
                     // Core Animation: print out all FPS data samples.
-                    NSArrayController *arrayController = TUIvar(run, _controller);
+                    XRVideoCardRun *videoCardRun = (XRVideoCardRun *)run;
+                    NSArrayController *arrayController = TUIvar(videoCardRun, _controller);
                     for (NSDictionary *sample in arrayController.arrangedObjects) {
                         NSNumber *fps = sample[@"FramesPerSecond"];
                         UInt64 timestamp = [sample[@"XRVideoCardRunTimeStamp"] integerValue] / USEC_PER_SEC;
@@ -123,6 +125,8 @@ int main(int argc, const char * argv[]) {
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.networking"]) {
                     // Connections:
+                    XRNetworkingInstrument *networkingInstrument = (XRNetworkingInstrument *)container;
+                    [TUIvarCast(networkingInstrument, _topLevelContexts, XRContext * const *)[1] display]; // 3 contexts: Processes, Connections, Interfaces.
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.power.mobile.energy"]) {
                     // Energy Usage Log:
                 } else {

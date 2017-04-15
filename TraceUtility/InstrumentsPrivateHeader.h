@@ -204,3 +204,8 @@ typedef struct { XRTime start, length; } XRTimeRange;
 
 @interface XRVideoCardInstrument : XRLegacyInstrument
 @end
+
+@interface XRNetworkingInstrument : XRLegacyInstrument {
+    XRContext * __strong *_topLevelContexts;
+}
+@end

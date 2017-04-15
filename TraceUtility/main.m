@@ -12,6 +12,18 @@
 #define TUPrint(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__])
 #define TUIvar(object, name) (__bridge id)*(void **)&((char *)(__bridge void *)object)[ivar_getOffset(class_getInstanceVariable(object_getClass(object), #name))]
 
+// Workaround to fix search paths for Instruments plugins and packages.
+static NSBundle *(*NSBundle_mainBundle_original)(id self, SEL _cmd);
+static NSBundle *NSBundle_mainBundle_replaced(id self, SEL _cmd) {
+    return [NSBundle bundleWithIdentifier:@"com.apple.dt.Instruments"];
+}
+
+static void __attribute__((constructor)) hook() {
+    Method NSBundle_mainBundle = class_getClassMethod(NSBundle.class, @selector(mainBundle));
+    NSBundle_mainBundle_original = (void *)method_getImplementation(NSBundle_mainBundle);
+    method_setImplementation(NSBundle_mainBundle, (IMP)NSBundle_mainBundle_replaced);
+}
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // Required. Each instrument is a plugin and we have to load them before we can process their data.

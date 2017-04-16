@@ -160,6 +160,7 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @end
 
 @interface XRLegacyInstrument : XRInstrument <XRInstrumentViewController, XRContextContainer>
+- (NSArray<XRContext *> *)_permittedContexts;
 @end
 
 @interface XRRawBacktrace : NSObject
@@ -215,4 +216,38 @@ typedef struct { XRTime start, length; } XRTimeRange;
     XRNetworkAddressFormatter *_remoteAddrFmtr;
 }
 - (void)selectedRunRecomputeSummaries;
+@end
+
+typedef struct {
+    XRTimeRange range;
+    UInt64 idx;
+    UInt32 recno;
+} XRPowerTimelineEntry;
+
+@interface XRPowerTimeline : NSObject
+- (UInt64)count;
+- (UInt64)lastIndex;
+- (XRTime)lastTimeOffset;
+- (void)enumerateTimeRange:(XRTimeRange)timeRange sequenceNumberRange:(NSRange)numberRange block:(void (^)(const XRPowerTimelineEntry *entry, BOOL *stop))block;
+@end
+
+@interface XRPowerStreamDefinition : NSObject
+- (UInt64)columnsInDataStreamCount;
+@end
+
+@interface XRPowerDatum : NSObject
+- (XRTimeRange)time;
+- (NSString *)labelForColumn:(SInt64)column;
+- (id)objectValueForColumn:(SInt64)column;
+@end
+
+@interface XRPowerDetailController : NSObject
+- (XRPowerDatum *)datumAtObjectIndex:(UInt64)index;
+@end
+
+@interface XRStreamedPowerInstrument : XRLegacyInstrument {
+    XRPowerDetailController *_detailController;
+}
+- (XRPowerStreamDefinition *)definitionForCurrentDetailView;
+- (XRPowerTimeline *)selectedEventTimeline;
 @end

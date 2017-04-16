@@ -146,7 +146,24 @@ int main(int argc, const char * argv[]) {
                         TUPrint(@"%@ -> %@: %@ received, %@ sent\n", localAddress, remoteAddress, inSize, outSize);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.power.mobile.energy"]) {
-                    // Energy Usage Log:
+                    // Energy Usage Log: print out all energy usage level data.
+                    XRStreamedPowerInstrument *powerInstrument = (XRStreamedPowerInstrument *)container;
+                    [powerInstrument._permittedContexts[0] display]; // 2 contexts: Energy Consumption, Power Source Events
+                    UInt64 columnCount = powerInstrument.definitionForCurrentDetailView.columnsInDataStreamCount;
+                    UInt64 rowCount = powerInstrument.selectedEventTimeline.count;
+                    XRPowerDetailController *powerDetail = TUIvar(powerInstrument, _detailController);
+                    for (UInt64 row = 0; row < rowCount; row++) {
+                        XRPowerDatum *datum = [powerDetail datumAtObjectIndex:row];
+                        NSMutableString *string = [NSMutableString string];
+                        [string appendFormat:@"%@-%@ s: ", @((double)datum.time.start / NSEC_PER_SEC), @((double)(datum.time.start + datum.time.length) / NSEC_PER_SEC)];
+                        for (UInt64 column = 0; column < columnCount; column++) {
+                            if (column > 0) {
+                                [string appendString:@", "];
+                            }
+                            [string appendFormat:@"%@ %@", [datum labelForColumn:column], [datum objectValueForColumn:column]];
+                        }
+                        TUPrint(@"%@\n", string);
+                    }
                 } else {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
                 }

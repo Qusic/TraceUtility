@@ -95,7 +95,7 @@ int main(int argc, const char * argv[]) {
                     NSMutableArray<PFTCallTreeNode *> *nodes = flattenTree(backtraceRepository.rootNode);
                     [nodes sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:NSStringFromSelector(@selector(terminals)) ascending:NO]]];
                     for (PFTCallTreeNode *node in nodes) {
-                        TUPrint(@"%@ %@ %ims\n", node.libraryName, node.symbolName, node.terminals);
+                        TUPrint(@"%@ %@ %i ms\n", node.libraryName, node.symbolName, node.terminals);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.oa"]) {
                     // Allocations: print out the memory allocated during each second in descending order of the size.
@@ -105,14 +105,17 @@ int main(int argc, const char * argv[]) {
                     NSMutableDictionary<NSNumber *, NSNumber *> *sizeGroupedByTime = [NSMutableDictionary dictionary];
                     for (XRObjectAllocEvent *event in arrayController.arrangedObjects) {
                         NSNumber *time = @(event.timestamp / NSEC_PER_SEC);
-                        NSNumber *size = @(sizeGroupedByTime[time].intValue + event.size);
+                        NSNumber *size = @(sizeGroupedByTime[time].integerValue + event.size);
                         sizeGroupedByTime[time] = size;
                     }
                     NSArray<NSNumber *> *sortedTime = [sizeGroupedByTime.allKeys sortedArrayUsingComparator:^(NSNumber *time1, NSNumber *time2) {
                         return [sizeGroupedByTime[time2] compare:sizeGroupedByTime[time1]];
                     }];
+                    NSByteCountFormatter *byteFormatter = [[NSByteCountFormatter alloc]init];
+                    byteFormatter.countStyle = NSByteCountFormatterCountStyleBinary;
                     for (NSNumber *time in sortedTime) {
-                        TUPrint(@"#%@ %@Bytes\n", time, sizeGroupedByTime[time]);
+                        NSString *size = [byteFormatter stringForObjectValue:sizeGroupedByTime[time]];
+                        TUPrint(@"#%@ %@\n", time, size);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coreanimation"]) {
                     // Core Animation: print out all FPS data samples.
@@ -121,7 +124,7 @@ int main(int argc, const char * argv[]) {
                     for (NSDictionary *sample in arrayController.arrangedObjects) {
                         NSNumber *fps = sample[@"FramesPerSecond"];
                         UInt64 timestamp = [sample[@"XRVideoCardRunTimeStamp"] integerValue] / USEC_PER_SEC;
-                        TUPrint(@"#%@ %@FPS\n", @(timestamp), fps);
+                        TUPrint(@"#%@ %@ FPS\n", @(timestamp), fps);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.networking"]) {
                     // Connections:

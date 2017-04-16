@@ -205,7 +205,14 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @interface XRVideoCardInstrument : XRLegacyInstrument
 @end
 
+@interface XRNetworkAddressFormatter : NSFormatter
+@end
+
 @interface XRNetworkingInstrument : XRLegacyInstrument {
     XRContext * __strong *_topLevelContexts;
+    NSArrayController * __strong *_controllersByTable;
+    XRNetworkAddressFormatter *_localAddrFmtr;
+    XRNetworkAddressFormatter *_remoteAddrFmtr;
 }
+- (void)selectedRunRecomputeSummaries;
 @end

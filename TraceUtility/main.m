@@ -127,9 +127,22 @@ int main(int argc, const char * argv[]) {
                         TUPrint(@"#%@ %@ FPS\n", @(timestamp), fps);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.networking"]) {
-                    // Connections:
+                    // Connections: print out all connections.
                     XRNetworkingInstrument *networkingInstrument = (XRNetworkingInstrument *)container;
                     [TUIvarCast(networkingInstrument, _topLevelContexts, XRContext * const *)[1] display]; // 3 contexts: Processes, Connections, Interfaces.
+                    [networkingInstrument selectedRunRecomputeSummaries];
+                    NSArrayController *arrayController = TUIvarCast(networkingInstrument, _controllersByTable, NSArrayController * const *)[1]; // The same index as for contexts.
+                    XRNetworkAddressFormatter *localAddressFormatter = TUIvar(networkingInstrument, _localAddrFmtr);
+                    XRNetworkAddressFormatter *remoteAddressFormatter = TUIvar(networkingInstrument, _remoteAddrFmtr);
+                    NSByteCountFormatter *byteFormatter = [[NSByteCountFormatter alloc]init];
+                    byteFormatter.countStyle = NSByteCountFormatterCountStyleBinary;
+                    for (NSDictionary *entry in arrayController.arrangedObjects) {
+                        NSString *localAddress = [localAddressFormatter stringForObjectValue:entry[@"localAddr"]];
+                        NSString *remoteAddress = [remoteAddressFormatter stringForObjectValue:entry[@"remoteAddr"]];
+                        NSString *inSize = [byteFormatter stringForObjectValue:entry[@"totalRxBytes"]];
+                        NSString *outSize = [byteFormatter stringForObjectValue:entry[@"totalTxBytes"]];
+                        TUPrint(@"%@ -> %@: %@ received, %@ sent\n", localAddress, remoteAddress, inSize, outSize);
+                    }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.power.mobile.energy"]) {
                     // Energy Usage Log:
                 } else {

@@ -59,7 +59,9 @@ int main(int argc, const char * argv[]) {
             TUPrint(@"\nInstrument: %@ (%@)\n", instrument.type.name, instrument.type.uuid);
 
             // Common routine to obtain the data container.
-            instrument.viewController = [[XRAnalysisCoreStandardController alloc]initWithInstrument:instrument document:document];
+            if (![instrument isKindOfClass:XRLegacyInstrument.class]) {
+                instrument.viewController = [[XRAnalysisCoreStandardController alloc]initWithInstrument:instrument document:document];
+            }
             id<XRInstrumentViewController> controller = instrument.viewController;
             [controller instrumentDidChangeSwitches];
             [controller instrumentChangedTableRequirements];
@@ -149,6 +151,9 @@ int main(int argc, const char * argv[]) {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
                 }
             }
+
+            // Common routine to cleanup after done.
+            [controller instrumentWillBecomeInvalid];
         }
 
         // Close the document safely.

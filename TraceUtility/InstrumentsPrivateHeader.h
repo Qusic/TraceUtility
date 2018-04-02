@@ -14,6 +14,7 @@ extern "C" {
     NSString *PFTDeveloperDirectory(void);
     void DVTInitializeSharedFrameworks(void);
     BOOL PFTLoadPlugins(void);
+    void PFTClosePlugins(void);
 #ifdef __cplusplus
 }
 #endif
@@ -26,6 +27,11 @@ extern "C" {
 @interface XRInternalizedSettingsStore : NSObject
 + (NSDictionary *)internalizedSettings;
 + (void)configureWithAdditionalURLs:(NSArray *)urls;
+@end
+
+@interface XRCapabilityRegistry : NSObject
++ (instancetype)applicationCapabilities;
+- (void)registerCapability:(NSString *)capability versions:(NSRange)versions;
 @end
 
 typedef UInt64 XRTime; // in nanoseconds

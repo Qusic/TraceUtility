@@ -16,7 +16,7 @@
 // Workaround to fix search paths for Instruments plugins and packages.
 static NSBundle *(*NSBundle_mainBundle_original)(id self, SEL _cmd);
 static NSBundle *NSBundle_mainBundle_replaced(id self, SEL _cmd) {
-    return [NSBundle bundleWithIdentifier:@"com.apple.dt.Instruments"];
+    return [NSBundle bundleWithPath:@"/Applications/Xcode.app/Contents/Applications/Instruments.app"];
 }
 
 static void __attribute__((constructor)) hook() {
@@ -31,6 +31,7 @@ int main(int argc, const char * argv[]) {
         DVTInitializeSharedFrameworks();
         [DVTDeveloperPaths initializeApplicationDirectoryName:@"Instruments"];
         [XRInternalizedSettingsStore configureWithAdditionalURLs:nil];
+        [[XRCapabilityRegistry applicationCapabilities]registerCapability:@"com.apple.dt.instruments.track_pinning" versions:NSMakeRange(1, 1)];
         PFTLoadPlugins();
 
         // Instruments has its own subclass of NSDocumentController without overriding sharedDocumentController method.
@@ -38,7 +39,12 @@ int main(int argc, const char * argv[]) {
         [PFTDocumentController sharedDocumentController];
 
         // Open a trace document.
-        NSString *tracePath = NSProcessInfo.processInfo.arguments[1];
+        NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
+        if (arguments.count < 2) {
+            TUPrint(@"Usage: %@ [%@]\n", arguments.firstObject.lastPathComponent, @"trace document");
+            return 1;
+        }
+        NSString *tracePath = arguments[1];
         NSError *error = nil;
         PFTTraceDocument *document = [[PFTTraceDocument alloc]initWithContentsOfURL:[NSURL fileURLWithPath:tracePath] ofType:@"Trace Document" error:&error];
         if (error) {
@@ -175,6 +181,7 @@ int main(int argc, const char * argv[]) {
 
         // Close the document safely.
         [document close];
+        PFTClosePlugins();
     }
     return 0;
 }

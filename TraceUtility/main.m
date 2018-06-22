@@ -46,7 +46,7 @@ int main(int argc, const char * argv[]) {
         }
         NSString *tracePath = arguments[1];
         NSError *error = nil;
-        PFTTraceDocument *document = [[PFTTraceDocument alloc]initWithContentsOfURL:[NSURL fileURLWithPath:tracePath] ofType:@"Trace Document" error:&error];
+        PFTTraceDocument *document = [[PFTTraceDocument alloc]initWithContentsOfURL:[NSURL fileURLWithPath:tracePath] ofType:@"com.apple.instruments.trace" error:&error];
         if (error) {
             TUPrint(@"Error: %@\n", error);
             return 1;

@@ -115,6 +115,7 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @end
 
 @interface XRAnalysisCoreDetailViewController : NSViewController <XRAnalysisCoreViewSubcontroller>
+- (void)restoreViewState;
 @end
 
 @protocol XRInstrumentViewController <NSObject>

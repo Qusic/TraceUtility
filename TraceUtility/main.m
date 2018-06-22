@@ -71,6 +71,10 @@ int main(int argc, const char * argv[]) {
             id<XRInstrumentViewController> controller = instrument.viewController;
             [controller instrumentDidChangeSwitches];
             [controller instrumentChangedTableRequirements];
+            if ([controller isKindOfClass:XRAnalysisCoreStandardController.class]) {
+                XRAnalysisCoreDetailViewController *detailController = TUIvarCast(controller, _detailController, XRAnalysisCoreDetailViewController * const);
+                [detailController restoreViewState];
+            }
             id<XRContextContainer> container = controller.detailContextContainer.contextRepresentation.container;
 
             // Each instrument can have multiple runs.

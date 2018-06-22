@@ -1,6 +1,6 @@
 # TraceUtility
 
-*Only tested with Instruments.app bundled in Xcode 8.3*
+*Works with Instruments.app bundled in Xcode 9.4 (example code may be outdated though)*
 
 *[Blog post](https://qusic.me/post/extract-data-from-trace-documents/) (in Chinese 中文)*
 

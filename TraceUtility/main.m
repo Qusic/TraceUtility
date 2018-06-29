@@ -201,10 +201,13 @@ int main(int argc, const char * argv[]) {
                 } else {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
                 }
-            }
 
-            // Common routine to cleanup after done.
-            [instrument invalidate];
+                // Common routine to cleanup after done.
+                if (![instrument isKindOfClass:XRLegacyInstrument.class]) {
+                    [instrument.viewController instrumentWillBecomeInvalid];
+                    instrument.viewController = nil;
+                }
+            }
         }
 
         // Close the document safely.

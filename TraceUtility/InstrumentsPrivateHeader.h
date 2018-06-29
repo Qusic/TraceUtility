@@ -52,7 +52,6 @@ typedef struct { XRTime start, length; } XRTimeRange;
 - (NSArray<XRRun *> *)allRuns;
 - (XRRun *)currentRun;
 - (void)setCurrentRun:(XRRun *)run;
-- (void)invalidate;
 @end
 
 @interface PFTInstrumentList : NSObject
@@ -192,7 +191,6 @@ XRContext *XRContextFromDetailNode(XRAnalysisCoreDetailViewController *detailCon
 @end
 
 typedef void XRAnalysisCoreReadCursor;
-
 typedef union {
     UInt32 uint32;
     UInt64 uint64;

@@ -83,7 +83,7 @@ Run #2: Run 2
 2 2 KB
 28 400 bytes
 
-Instrument: Core Animation (com.apple.xray.instrument-type.coreanimation)
+Instrument: Core Animation (com.apple.dt.coreanimation-fps)
 Run #2: Run 2
 00:00.000.000  0 FPS 34.0% GPU
 00:00.001.148  4 FPS 36.0% GPU
@@ -99,7 +99,7 @@ Run #2: Run 2
 00:10.846.081 57 FPS 31.0% GPU
 00:11.854.797 24 FPS  8.0% GPU
 
-Instrument: Connections (com.apple.xray.instrument-type.networking)
+Instrument: Connections (com.apple.dt.network-connections)
 Run #2: Run 2
 Wi-Fi tcp4 xxx:xxx<->xxx:xxx, 0 Bytes in, 64 Bytes out
 Wi-Fi tcp4 xxx:xxx<->xxx:xxx, 0 Bytes in, 0 Bytes out

@@ -64,18 +64,21 @@ int main(int argc, const char * argv[]) {
         for (XRInstrument *instrument in trace.allInstrumentsList.allInstruments) {
             TUPrint(@"\nInstrument: %@ (%@)\n", instrument.type.name, instrument.type.uuid);
 
-            // Common routine to obtain the data container.
+            // Common routine to obtain contexts for the instrument.
+            NSMutableArray<XRContext *> *contexts = [NSMutableArray array];
             if (![instrument isKindOfClass:XRLegacyInstrument.class]) {
-                instrument.viewController = [[XRAnalysisCoreStandardController alloc]initWithInstrument:instrument document:document];
-            }
-            id<XRInstrumentViewController> controller = instrument.viewController;
-            [controller instrumentDidChangeSwitches];
-            [controller instrumentChangedTableRequirements];
-            if ([controller isKindOfClass:XRAnalysisCoreStandardController.class]) {
-                XRAnalysisCoreDetailViewController *detailController = TUIvarCast(controller, _detailController, XRAnalysisCoreDetailViewController * const);
+                XRAnalysisCoreStandardController *standardController = [[XRAnalysisCoreStandardController alloc]initWithInstrument:instrument document:document];
+                instrument.viewController = standardController;
+                [standardController instrumentDidChangeSwitches];
+                [standardController instrumentChangedTableRequirements];
+                XRAnalysisCoreDetailViewController *detailController = TUIvar(standardController, _detailController);
                 [detailController restoreViewState];
+                XRAnalysisCoreDetailNode *detailNode = TUIvar(detailController, _firstNode);
+                while (detailNode) {
+                    [contexts addObject:XRContextFromDetailNode(detailController, detailNode)];
+                    detailNode = detailNode.nextSibling;
+                }
             }
-            id<XRContextContainer> container = controller.detailContextContainer.contextRepresentation.container;
 
             // Each instrument can have multiple runs.
             NSArray<XRRun *> *runs = instrument.allRuns;
@@ -92,8 +95,11 @@ int main(int argc, const char * argv[]) {
                 NSString *instrumentID = instrument.type.uuid;
                 if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coresampler2"]) {
                     // Time Profiler: print out all functions in descending order of self execution time.
-                    XRCallTreeDetailView *callTreeView = (XRCallTreeDetailView *)container;
-                    XRBacktraceRepository *backtraceRepository = callTreeView.backtraceRepository;
+                    // 3 contexts: Profile, Narrative, Samples
+                    XRContext *context = contexts[0];
+                    [context display];
+                    XRAnalysisCoreCallTreeViewController *controller = TUIvar(context.container, _callTreeViewController);
+                    XRBacktraceRepository *backtraceRepository = TUIvar(controller, _backtraceRepository);
                     static NSMutableArray<PFTCallTreeNode *> * (^ const flattenTree)(PFTCallTreeNode *) = ^(PFTCallTreeNode *rootNode) { // Helper function to collect all tree nodes.
                         NSMutableArray *nodes = [NSMutableArray array];
                         if (rootNode) {
@@ -111,8 +117,9 @@ int main(int argc, const char * argv[]) {
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.oa"]) {
                     // Allocations: print out the memory allocated during each second in descending order of the size.
-                    XRObjectAllocInstrument *allocInstrument = (XRObjectAllocInstrument *)container;
-                    [allocInstrument._topLevelContexts[2] display]; // 4 contexts: Statistics, Call Trees, Allocations List, Generations.
+                    XRObjectAllocInstrument *allocInstrument = (XRObjectAllocInstrument *)instrument;
+                    // 4 contexts: Statistics, Call Trees, Allocations List, Generations.
+                    [allocInstrument._topLevelContexts[2] display];
                     XRManagedEventArrayController *arrayController = TUIvar(TUIvar(allocInstrument, _objectListController), _ac);
                     NSMutableDictionary<NSNumber *, NSNumber *> *sizeGroupedByTime = [NSMutableDictionary dictionary];
                     for (XRObjectAllocEvent *event in arrayController.arrangedObjects) {
@@ -129,58 +136,75 @@ int main(int argc, const char * argv[]) {
                         NSString *size = [byteFormatter stringForObjectValue:sizeGroupedByTime[time]];
                         TUPrint(@"#%@ %@\n", time, size);
                     }
-                } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.coreanimation"]) {
-                    // Core Animation: print out all FPS data samples.
-                    XRVideoCardRun *videoCardRun = (XRVideoCardRun *)run;
-                    NSArrayController *arrayController = TUIvar(videoCardRun, _controller);
-                    for (NSDictionary *sample in arrayController.arrangedObjects) {
-                        NSNumber *fps = sample[@"FramesPerSecond"];
-                        UInt64 timestamp = [sample[@"XRVideoCardRunTimeStamp"] integerValue] / USEC_PER_SEC;
-                        TUPrint(@"#%@ %@ FPS\n", @(timestamp), fps);
-                    }
+                } else if ([instrumentID isEqualToString:@"com.apple.dt.coreanimation-fps"]) {
+                    // Core Animation FPS: print out all FPS data samples.
+                    // 2 contexts: Measurements, Statistics
+                    XRContext *context = contexts[0];
+                    [context display];
+                    XRAnalysisCoreTableViewController *controller = TUIvar(context.container, _tabularViewController);
+                    XRAnalysisCorePivotArray *array = controller._currentResponse.content.rows;
+                    XREngineeringTypeFormatter *formatter = TUIvarCast(array.source, _filter, XRAnalysisCoreTableQuery * const).fullTextSearchSpec.formatter;
+                    [array access:^(XRAnalysisCorePivotArrayAccessor *accessor) {
+                        [accessor readRowsStartingAt:0 dimension:0 block:^(XRAnalysisCoreReadCursor *cursor) {
+                            while (XRAnalysisCoreReadCursorNext(cursor)) {
+                                BOOL result = NO;
+                                XRAnalysisCoreValue *object = nil;
+                                // 4 columns: Interval, Duration, Frames Per Second, GPU Hardware Utilization
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 0, &object);
+                                NSString *timestamp = [formatter stringForObjectValue:object];
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 2, &object);
+                                double fps = result ? [object.objectValue doubleValue] : 0;
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 3, &object);
+                                double gpu = result ? [object.objectValue doubleValue] : 0;
+                                TUPrint(@"#%@ %2.0f FPS %4.1f%% GPU\n", timestamp, fps, gpu);
+                            }
+                        }];
+                    }];
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.networking"]) {
                     // Connections: print out all connections.
-                    XRNetworkingInstrument *networkingInstrument = (XRNetworkingInstrument *)container;
-                    [TUIvarCast(networkingInstrument, _topLevelContexts, XRContext * const *)[1] display]; // 3 contexts: Processes, Connections, Interfaces.
-                    [networkingInstrument selectedRunRecomputeSummaries];
-                    NSArrayController *arrayController = TUIvarCast(networkingInstrument, _controllersByTable, NSArrayController * const *)[1]; // The same index as for contexts.
-                    XRNetworkAddressFormatter *localAddressFormatter = TUIvar(networkingInstrument, _localAddrFmtr);
-                    XRNetworkAddressFormatter *remoteAddressFormatter = TUIvar(networkingInstrument, _remoteAddrFmtr);
-                    NSByteCountFormatter *byteFormatter = [[NSByteCountFormatter alloc]init];
-                    byteFormatter.countStyle = NSByteCountFormatterCountStyleBinary;
-                    for (NSDictionary *entry in arrayController.arrangedObjects) {
-                        NSString *localAddress = [localAddressFormatter stringForObjectValue:entry[@"localAddr"]];
-                        NSString *remoteAddress = [remoteAddressFormatter stringForObjectValue:entry[@"remoteAddr"]];
-                        NSString *inSize = [byteFormatter stringForObjectValue:entry[@"totalRxBytes"]];
-                        NSString *outSize = [byteFormatter stringForObjectValue:entry[@"totalTxBytes"]];
-                        TUPrint(@"%@ -> %@: %@ received, %@ sent\n", localAddress, remoteAddress, inSize, outSize);
-                    }
+//                    XRNetworkingInstrument *networkingInstrument = (XRNetworkingInstrument *)instrument;
+//                    // 3 contexts: Processes, Connections, Interfaces.
+//                    [TUIvarCast(networkingInstrument, _topLevelContexts, XRContext * const *)[1] display];
+//                    [networkingInstrument selectedRunRecomputeSummaries];
+//                    NSArrayController *arrayController = TUIvarCast(networkingInstrument, _controllersByTable, NSArrayController * const *)[1]; // The same index as for contexts.
+//                    XRNetworkAddressFormatter *localAddressFormatter = TUIvar(networkingInstrument, _localAddrFmtr);
+//                    XRNetworkAddressFormatter *remoteAddressFormatter = TUIvar(networkingInstrument, _remoteAddrFmtr);
+//                    NSByteCountFormatter *byteFormatter = [[NSByteCountFormatter alloc]init];
+//                    byteFormatter.countStyle = NSByteCountFormatterCountStyleBinary;
+//                    for (NSDictionary *entry in arrayController.arrangedObjects) {
+//                        NSString *localAddress = [localAddressFormatter stringForObjectValue:entry[@"localAddr"]];
+//                        NSString *remoteAddress = [remoteAddressFormatter stringForObjectValue:entry[@"remoteAddr"]];
+//                        NSString *inSize = [byteFormatter stringForObjectValue:entry[@"totalRxBytes"]];
+//                        NSString *outSize = [byteFormatter stringForObjectValue:entry[@"totalTxBytes"]];
+//                        TUPrint(@"%@ -> %@: %@ received, %@ sent\n", localAddress, remoteAddress, inSize, outSize);
+//                    }
                 } else if ([instrumentID isEqualToString:@"com.apple.xray.power.mobile.energy"]) {
                     // Energy Usage Log: print out all energy usage level data.
-                    XRStreamedPowerInstrument *powerInstrument = (XRStreamedPowerInstrument *)container;
-                    [powerInstrument._permittedContexts[0] display]; // 2 contexts: Energy Consumption, Power Source Events
-                    UInt64 columnCount = powerInstrument.definitionForCurrentDetailView.columnsInDataStreamCount;
-                    UInt64 rowCount = powerInstrument.selectedEventTimeline.count;
-                    XRPowerDetailController *powerDetail = TUIvar(powerInstrument, _detailController);
-                    for (UInt64 row = 0; row < rowCount; row++) {
-                        XRPowerDatum *datum = [powerDetail datumAtObjectIndex:row];
-                        NSMutableString *string = [NSMutableString string];
-                        [string appendFormat:@"%@-%@ s: ", @((double)datum.time.start / NSEC_PER_SEC), @((double)(datum.time.start + datum.time.length) / NSEC_PER_SEC)];
-                        for (UInt64 column = 0; column < columnCount; column++) {
-                            if (column > 0) {
-                                [string appendString:@", "];
-                            }
-                            [string appendFormat:@"%@ %@", [datum labelForColumn:column], [datum objectValueForColumn:column]];
-                        }
-                        TUPrint(@"%@\n", string);
-                    }
+//                    XRStreamedPowerInstrument *powerInstrument = (XRStreamedPowerInstrument *)instrument;
+//                    // 2 contexts: Energy Consumption, Power Source Events
+//                    [powerInstrument._permittedContexts[0] display];
+//                    UInt64 columnCount = powerInstrument.definitionForCurrentDetailView.columnsInDataStreamCount;
+//                    UInt64 rowCount = powerInstrument.selectedEventTimeline.count;
+//                    XRPowerDetailController *powerDetail = TUIvar(powerInstrument, _detailController);
+//                    for (UInt64 row = 0; row < rowCount; row++) {
+//                        XRPowerDatum *datum = [powerDetail datumAtObjectIndex:row];
+//                        NSMutableString *string = [NSMutableString string];
+//                        [string appendFormat:@"%@-%@ s: ", @((double)datum.time.start / NSEC_PER_SEC), @((double)(datum.time.start + datum.time.length) / NSEC_PER_SEC)];
+//                        for (UInt64 column = 0; column < columnCount; column++) {
+//                            if (column > 0) {
+//                                [string appendString:@", "];
+//                            }
+//                            [string appendFormat:@"%@ %@", [datum labelForColumn:column], [datum objectValueForColumn:column]];
+//                        }
+//                        TUPrint(@"%@\n", string);
+//                    }
                 } else {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
                 }
             }
 
             // Common routine to cleanup after done.
-            [controller instrumentWillBecomeInvalid];
+            [instrument invalidate];
         }
 
         // Close the document safely.

@@ -13,6 +13,7 @@ We need to link against these frameworks:
 * `/Applications/Xcode.app/Contents/SharedFrameworks/DVTInstrumentsUtilities.framework`
 * `/Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsPlugIn.framework`
 * `/Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsKit.framework`
+* `/Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsAnalysisCore.framework`
 
 Instrument templates used by the app are packages in `/Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Packages` and plugins in `/Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/PlugIns`.
 

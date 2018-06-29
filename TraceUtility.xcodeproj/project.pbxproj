@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3025618C1E71472F005DF7FF /* InstrumentsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3025618B1E71472F005DF7FF /* InstrumentsKit.framework */; };
-		3086E15E1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */; };
-		3086E1601DBEFE7A00FA1F92 /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */; };
-		30FBC8F42072449700D9DCAE /* DVTInstrumentsUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30FBC8F32072449700D9DCAE /* DVTInstrumentsUtilities.framework */; };
+		D2BABC6920E520B80048C20A /* InstrumentsAnalysisCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BABC6820E520B80048C20A /* InstrumentsAnalysisCore.framework */; };
+		D2BABC6B20E520BF0048C20A /* InstrumentsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BABC6A20E520BF0048C20A /* InstrumentsKit.framework */; };
+		D2BABC6D20E521020048C20A /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BABC6C20E521020048C20A /* DVTFoundation.framework */; };
+		D2BABC6F20E5210C0048C20A /* DVTInstrumentsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BABC6E20E5210C0048C20A /* DVTInstrumentsFoundation.framework */; };
+		D2BABC7120E521170048C20A /* DVTInstrumentsUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BABC7020E521160048C20A /* DVTInstrumentsUtilities.framework */; };
 		FECBF4831B9D577200D653A7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FECBF4821B9D577200D653A7 /* main.m */; };
 		FECBF4951B9D6CE500D653A7 /* InstrumentsPlugIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */; };
 /* End PBXBuildFile section */
@@ -28,10 +29,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3025618B1E71472F005DF7FF /* InstrumentsKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InstrumentsKit.framework; path = ../../../../Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsKit.framework; sourceTree = "<group>"; };
-		3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTInstrumentsFoundation.framework; sourceTree = "<group>"; };
-		3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework; sourceTree = "<group>"; };
-		30FBC8F32072449700D9DCAE /* DVTInstrumentsUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsUtilities.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTInstrumentsUtilities.framework; sourceTree = "<group>"; };
+		D2BABC6820E520B80048C20A /* InstrumentsAnalysisCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InstrumentsAnalysisCore.framework; path = /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsAnalysisCore.framework; sourceTree = "<group>"; };
+		D2BABC6A20E520BF0048C20A /* InstrumentsKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InstrumentsKit.framework; path = /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Frameworks/InstrumentsKit.framework; sourceTree = "<group>"; };
+		D2BABC6C20E521020048C20A /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = /Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework; sourceTree = "<group>"; };
+		D2BABC6E20E5210C0048C20A /* DVTInstrumentsFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsFoundation.framework; path = /Applications/Xcode.app/Contents/SharedFrameworks/DVTInstrumentsFoundation.framework; sourceTree = "<group>"; };
+		D2BABC7020E521160048C20A /* DVTInstrumentsUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTInstrumentsUtilities.framework; path = /Applications/Xcode.app/Contents/SharedFrameworks/DVTInstrumentsUtilities.framework; sourceTree = "<group>"; };
 		FE0153E61B9E7E630062C910 /* InstrumentsPrivateHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstrumentsPrivateHeader.h; sourceTree = "<group>"; };
 		FECBF47F1B9D577200D653A7 /* TraceUtility */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TraceUtility; sourceTree = BUILT_PRODUCTS_DIR; };
 		FECBF4821B9D577200D653A7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -43,11 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3086E1601DBEFE7A00FA1F92 /* DVTFoundation.framework in Frameworks */,
-				3086E15E1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework in Frameworks */,
-				30FBC8F42072449700D9DCAE /* DVTInstrumentsUtilities.framework in Frameworks */,
+				D2BABC6920E520B80048C20A /* InstrumentsAnalysisCore.framework in Frameworks */,
+				D2BABC6F20E5210C0048C20A /* DVTInstrumentsFoundation.framework in Frameworks */,
+				D2BABC7120E521170048C20A /* DVTInstrumentsUtilities.framework in Frameworks */,
 				FECBF4951B9D6CE500D653A7 /* InstrumentsPlugIn.framework in Frameworks */,
-				3025618C1E71472F005DF7FF /* InstrumentsKit.framework in Frameworks */,
+				D2BABC6B20E520BF0048C20A /* InstrumentsKit.framework in Frameworks */,
+				D2BABC6D20E521020048C20A /* DVTFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,11 +60,12 @@
 		FE0153E51B9E7E370062C910 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3086E15F1DBEFE7A00FA1F92 /* DVTFoundation.framework */,
-				3086E15D1DBEFB3900FA1F92 /* DVTInstrumentsFoundation.framework */,
-				30FBC8F32072449700D9DCAE /* DVTInstrumentsUtilities.framework */,
+				D2BABC6C20E521020048C20A /* DVTFoundation.framework */,
+				D2BABC6E20E5210C0048C20A /* DVTInstrumentsFoundation.framework */,
+				D2BABC7020E521160048C20A /* DVTInstrumentsUtilities.framework */,
 				FECBF4931B9D6CE500D653A7 /* InstrumentsPlugIn.framework */,
-				3025618B1E71472F005DF7FF /* InstrumentsKit.framework */,
+				D2BABC6820E520B80048C20A /* InstrumentsAnalysisCore.framework */,
+				D2BABC6A20E520BF0048C20A /* InstrumentsKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

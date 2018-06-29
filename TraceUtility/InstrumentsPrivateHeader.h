@@ -8,16 +8,10 @@
 
 #import <AppKit/AppKit.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    NSString *PFTDeveloperDirectory(void);
-    void DVTInitializeSharedFrameworks(void);
-    BOOL PFTLoadPlugins(void);
-    void PFTClosePlugins(void);
-#ifdef __cplusplus
-}
-#endif
+NSString *PFTDeveloperDirectory(void);
+void DVTInitializeSharedFrameworks(void);
+BOOL PFTLoadPlugins(void);
+void PFTClosePlugins(void);
 
 @interface DVTDeveloperPaths : NSObject
 + (NSString *)applicationDirectoryName;
@@ -58,6 +52,7 @@ typedef struct { XRTime start, length; } XRTimeRange;
 - (NSArray<XRRun *> *)allRuns;
 - (XRRun *)currentRun;
 - (void)setCurrentRun:(XRRun *)run;
+- (void)invalidate;
 @end
 
 @interface PFTInstrumentList : NSObject
@@ -105,22 +100,51 @@ typedef struct { XRTime start, length; } XRTimeRange;
 
 @protocol XRContextContainer <NSObject>
 - (XRContext *)contextRepresentation;
+- (NSArray<XRContext *> *)siblingsForContext:(XRContext *)context;
 - (void)displayContext:(XRContext *)context;
 @end
 
 @protocol XRFilteredDataSource <NSObject>
 @end
 
+@protocol XRSearchTarget <NSObject>
+@end
+
+@protocol XRCallTreeDataSource <NSObject>
+@end
+
 @protocol XRAnalysisCoreViewSubcontroller <XRContextContainer, XRFilteredDataSource>
 @end
 
-@interface XRAnalysisCoreDetailViewController : NSViewController <XRAnalysisCoreViewSubcontroller>
+typedef NS_ENUM(SInt32, XRAnalysisCoreDetailViewType) {
+    XRAnalysisCoreDetailViewTypeProjection = 1,
+    XRAnalysisCoreDetailViewTypeCallTree = 2,
+    XRAnalysisCoreDetailViewTypeTabular = 3,
+};
+
+@interface XRAnalysisCoreDetailNode : NSObject
+- (instancetype)firstSibling;
+- (instancetype)nextSibling;
+- (XRAnalysisCoreDetailViewType)viewKind;
+@end
+
+@class XRAnalysisCoreProjectionViewController, XRAnalysisCoreCallTreeViewController, XRAnalysisCoreTableViewController;
+
+@interface XRAnalysisCoreDetailViewController : NSViewController <XRAnalysisCoreViewSubcontroller> {
+    XRAnalysisCoreDetailNode *_firstNode;
+    XRAnalysisCoreProjectionViewController *_projectionViewController;
+    XRAnalysisCoreCallTreeViewController *_callTreeViewController;
+    XRAnalysisCoreTableViewController *_tabularViewController;
+}
 - (void)restoreViewState;
 @end
+
+XRContext *XRContextFromDetailNode(XRAnalysisCoreDetailViewController *detailController, XRAnalysisCoreDetailNode *detailNode);
 
 @protocol XRInstrumentViewController <NSObject>
 - (id<XRContextContainer>)detailContextContainer;
 - (id<XRFilteredDataSource>)detailFilteredDataSource;
+- (id<XRSearchTarget>)detailSearchTarget;
 - (void)instrumentDidChangeSwitches;
 - (void)instrumentChangedTableRequirements;
 - (void)instrumentWillBecomeInvalid;
@@ -128,6 +152,9 @@ typedef struct { XRTime start, length; } XRTimeRange;
 
 @interface XRAnalysisCoreStandardController : NSObject <XRInstrumentViewController>
 - (instancetype)initWithInstrument:(XRInstrument *)instrument document:(PFTTraceDocument *)document;
+@end
+
+@interface XRAnalysisCoreProjectionViewController : NSViewController <XRSearchTarget>
 @end
 
 @interface PFTCallTreeNode : NSObject
@@ -159,11 +186,69 @@ typedef struct { XRTime start, length; } XRTimeRange;
 @interface XRMultiProcessBacktraceRepository : XRBacktraceRepository
 @end
 
-@interface XRManagedEventArrayController : NSArrayController
+@interface XRAnalysisCoreCallTreeViewController : NSViewController <XRFilteredDataSource, XRCallTreeDataSource> {
+    XRBacktraceRepository *_backtraceRepository;
+}
 @end
 
-@interface XRCallTreeDetailView : NSView
-- (XRBacktraceRepository *)backtraceRepository;
+typedef void XRAnalysisCoreReadCursor;
+
+typedef union {
+    UInt32 uint32;
+    UInt64 uint64;
+    UInt32 iid;
+} XRStoredValue;
+
+@interface XRAnalysisCoreValue : NSObject
+- (XRStoredValue)storedValue;
+- (id)objectValue;
+@end
+
+BOOL XRAnalysisCoreReadCursorNext(XRAnalysisCoreReadCursor *cursor);
+SInt64 XRAnalysisCoreReadCursorColumnCount(XRAnalysisCoreReadCursor *cursor);
+XRStoredValue XRAnalysisCoreReadCursorGetStored(XRAnalysisCoreReadCursor *cursor, UInt8 column);
+BOOL XRAnalysisCoreReadCursorGetValue(XRAnalysisCoreReadCursor *cursor, UInt8 column, XRAnalysisCoreValue * __strong *pointer);
+
+@interface XREngineeringTypeFormatter : NSFormatter
+@end
+
+@interface XRAnalysisCoreFullTextSearchSpec : NSObject
+- (XREngineeringTypeFormatter *)formatter;
+@end
+
+@interface XRAnalysisCoreTableQuery : NSObject
+- (XRAnalysisCoreFullTextSearchSpec *)fullTextSearchSpec;
+@end
+
+@interface XRAnalysisCoreRowArray : NSObject {
+    XRAnalysisCoreTableQuery *_filter;
+}
+@end
+
+@interface XRAnalysisCorePivotArrayAccessor : NSObject
+- (UInt64)rowInDimension:(UInt8)dimension closestToTime:(XRTime)time intersects:(SInt8 *)intersects;
+- (void)readRowsStartingAt:(UInt64)index dimension:(UInt8)dimension block:(void (^)(XRAnalysisCoreReadCursor *cursor))block;
+@end
+
+@interface XRAnalysisCorePivotArray : NSObject
+- (XRAnalysisCoreRowArray *)source;
+- (UInt64)count;
+- (void)access:(void (^)(XRAnalysisCorePivotArrayAccessor *accessor))block;
+@end
+
+@interface XRAnalysisCoreTableViewControllerResponse : NSObject
+- (XRAnalysisCorePivotArray *)rows;
+@end
+
+@interface DTRenderableContentResponse : NSObject
+- (XRAnalysisCoreTableViewControllerResponse *)content;
+@end
+
+@interface XRAnalysisCoreTableViewController : NSViewController <XRFilteredDataSource, XRSearchTarget>
+- (DTRenderableContentResponse *)_currentResponse;
+@end
+
+@interface XRManagedEventArrayController : NSArrayController
 @end
 
 @interface XRLegacyInstrument : XRInstrument <XRInstrumentViewController, XRContextContainer>
@@ -205,56 +290,56 @@ typedef struct { XRTime start, length; } XRTimeRange;
 - (NSArray<XRContext *> *)_topLevelContexts;
 @end
 
-@interface XRVideoCardRun : XRRun {
-    NSArrayController *_controller;
-}
-@end
+//@interface XRVideoCardRun : XRRun {
+//    NSArrayController *_controller;
+//}
+//@end
+//
+//@interface XRVideoCardInstrument : XRLegacyInstrument
+//@end
 
-@interface XRVideoCardInstrument : XRLegacyInstrument
-@end
+//@interface XRNetworkAddressFormatter : NSFormatter
+//@end
+//
+//@interface XRNetworkingInstrument : XRLegacyInstrument {
+//    XRContext * __strong *_topLevelContexts;
+//    NSArrayController * __strong *_controllersByTable;
+//    XRNetworkAddressFormatter *_localAddrFmtr;
+//    XRNetworkAddressFormatter *_remoteAddrFmtr;
+//}
+//- (void)selectedRunRecomputeSummaries;
+//@end
 
-@interface XRNetworkAddressFormatter : NSFormatter
-@end
-
-@interface XRNetworkingInstrument : XRLegacyInstrument {
-    XRContext * __strong *_topLevelContexts;
-    NSArrayController * __strong *_controllersByTable;
-    XRNetworkAddressFormatter *_localAddrFmtr;
-    XRNetworkAddressFormatter *_remoteAddrFmtr;
-}
-- (void)selectedRunRecomputeSummaries;
-@end
-
-typedef struct {
-    XRTimeRange range;
-    UInt64 idx;
-    UInt32 recno;
-} XRPowerTimelineEntry;
-
-@interface XRPowerTimeline : NSObject
-- (UInt64)count;
-- (UInt64)lastIndex;
-- (XRTime)lastTimeOffset;
-- (void)enumerateTimeRange:(XRTimeRange)timeRange sequenceNumberRange:(NSRange)numberRange block:(void (^)(const XRPowerTimelineEntry *entry, BOOL *stop))block;
-@end
-
-@interface XRPowerStreamDefinition : NSObject
-- (UInt64)columnsInDataStreamCount;
-@end
-
-@interface XRPowerDatum : NSObject
-- (XRTimeRange)time;
-- (NSString *)labelForColumn:(SInt64)column;
-- (id)objectValueForColumn:(SInt64)column;
-@end
-
-@interface XRPowerDetailController : NSObject
-- (XRPowerDatum *)datumAtObjectIndex:(UInt64)index;
-@end
-
-@interface XRStreamedPowerInstrument : XRLegacyInstrument {
-    XRPowerDetailController *_detailController;
-}
-- (XRPowerStreamDefinition *)definitionForCurrentDetailView;
-- (XRPowerTimeline *)selectedEventTimeline;
-@end
+//typedef struct {
+//    XRTimeRange range;
+//    UInt64 idx;
+//    UInt32 recno;
+//} XRPowerTimelineEntry;
+//
+//@interface XRPowerTimeline : NSObject
+//- (UInt64)count;
+//- (UInt64)lastIndex;
+//- (XRTime)lastTimeOffset;
+//- (void)enumerateTimeRange:(XRTimeRange)timeRange sequenceNumberRange:(NSRange)numberRange block:(void (^)(const XRPowerTimelineEntry *entry, BOOL *stop))block;
+//@end
+//
+//@interface XRPowerStreamDefinition : NSObject
+//- (UInt64)columnsInDataStreamCount;
+//@end
+//
+//@interface XRPowerDatum : NSObject
+//- (XRTimeRange)time;
+//- (NSString *)labelForColumn:(SInt64)column;
+//- (id)objectValueForColumn:(SInt64)column;
+//@end
+//
+//@interface XRPowerDetailController : NSObject
+//- (XRPowerDatum *)datumAtObjectIndex:(UInt64)index;
+//@end
+//
+//@interface XRStreamedPowerInstrument : XRLegacyInstrument {
+//    XRPowerDetailController *_detailController;
+//}
+//- (XRPowerStreamDefinition *)definitionForCurrentDetailView;
+//- (XRPowerTimeline *)selectedEventTimeline;
+//@end

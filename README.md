@@ -1,6 +1,6 @@
 # TraceUtility
 
-*Works with Instruments.app bundled in Xcode 9.4 (example code may be outdated though)*
+*Works with Instruments.app bundled in Xcode 9.4*
 
 *[Blog post](https://qusic.me/post/extract-data-from-trace-documents/) (in Chinese 中文)*
 
@@ -24,8 +24,7 @@ This project contains these example routines:
 * **Time Profiler**: print out all functions in descending order of self execution time.
 * **Allocations**: print out the memory allocated during each second in descending order of the size.
 * **Core Animation**: print out all FPS data samples.
-* **Connections**: print out all connections.
-* **Energy Usage Log**: print out all energy usage level data.
+* **Connections**: print out connection history with protocol, addresses and bytes transferred.
 
 They are not all of the templates included in Instruments. However, it is well enough to demonstrate how to work with the data in several common structures, such as call trees, tables and streams.
 
@@ -73,113 +72,37 @@ liboainject.dylib 0x10009b064 1 ms
 
 Instrument: Allocations (com.apple.xray.instrument-type.oa)
 Run #2: Run 2
-#1 2.8 MB
-#6 1.5 MB
-#36 768 KB
-#31 385 KB
-#33 384 KB
-#25 214 KB
-#27 209 KB
-#26 105 KB
-#2 2 KB
-#28 400 bytes
+1 2.8 MB
+6 1.5 MB
+36 768 KB
+31 385 KB
+33 384 KB
+25 214 KB
+27 209 KB
+26 105 KB
+2 2 KB
+28 400 bytes
 
 Instrument: Core Animation (com.apple.xray.instrument-type.coreanimation)
 Run #2: Run 2
-#0 0 FPS
-#1 41 FPS
-#2 59 FPS
-#3 60 FPS
-#4 59 FPS
-#5 60 FPS
-#6 59 FPS
-#7 59 FPS
-#8 60 FPS
-#9 59 FPS
-#10 60 FPS
-#11 59 FPS
-#12 60 FPS
-#13 59 FPS
-#14 59 FPS
-#15 60 FPS
-#16 59 FPS
-#17 59 FPS
-#18 60 FPS
-#19 59 FPS
-#20 59 FPS
-#21 60 FPS
-#22 59 FPS
-#23 60 FPS
-#24 59 FPS
-#25 47 FPS
-#26 0 FPS
-#27 43 FPS
-#28 2 FPS
-#29 0 FPS
-#30 0 FPS
-#31 0 FPS
-#32 0 FPS
-#33 0 FPS
-#34 0 FPS
-#35 0 FPS
-#36 0 FPS
-#37 0 FPS
-#38 0 FPS
-#39 0 FPS
-#40 0 FPS
-#41 0 FPS
-#42 0 FPS
+00:00.000.000  0 FPS 34.0% GPU
+00:00.001.148  4 FPS 36.0% GPU
+00:01.008.767  0 FPS  0.0% GPU
+00:02.017.394  4 FPS  0.0% GPU
+00:03.307.257 52 FPS 49.0% GPU
+00:04.466.874 59 FPS 34.0% GPU
+00:05.470.818 60 FPS 35.0% GPU
+00:06.481.732 59 FPS 38.0% GPU
+00:07.487.501 54 FPS 10.0% GPU
+00:08.493.927 26 FPS 54.0% GPU
+00:09.724.195 20 FPS 38.0% GPU
+00:10.846.081 57 FPS 31.0% GPU
+00:11.854.797 24 FPS  8.0% GPU
 
 Instrument: Connections (com.apple.xray.instrument-type.networking)
 Run #2: Run 2
-ipv4 *:5353 -> ipv4 *:*: 4.8 MB received, 2.7 MB sent
-ipv6 ::.5353 -> ipv6 ::.*: 3.4 MB received, 2.9 MB sent
-ipv6 fe80::101c:769f:fb99:73e7.59261 -> ipv6 fe80::10ed:2a48:98c1:bb89.52619: 120 KB received, 68 KB sent
-ipv6 2409:8800:9209:40b8:18f6:72a:79f9:43af.64342 -> ipv6 ::.*: 111 KB received, Zero KB sent
-ipv4 192.168.1.111:59324 -> ipv4 17.252.156.68:443: 37 KB received, 39 KB sent
-ipv4 240.0.0.1:59323 -> ipv4 17.252.156.68:443: 37 KB received, 38 KB sent
-ipv4 192.168.1.111:60519 -> ipv4 17.132.92.5:443: 6 KB received, 6 KB sent
-ipv4 240.0.0.1:60518 -> ipv4 17.132.92.5:443: 6 KB received, 5 KB sent
-ipv4 240.0.0.1:60544 -> ipv4 240.0.0.3:6152: 5 KB received, 3 KB sent
-ipv4 192.168.1.111:60545 -> ipv4 104.199.205.33:63389: 5 KB received, 2 KB sent
-ipv6 fe80::101c:769f:fb99:73e7.59282 -> ipv6 fe80::10ed:2a48:98c1:bb89.52624: 3 KB received, 3 KB sent
-ipv6 fe80::101c:769f:fb99:73e7.59283 -> ipv6 fe80::10ed:2a48:98c1:bb89.52625: 2 KB received, 2 KB sent
-ipv6 fe80::101c:769f:fb99:73e7.59277 -> ipv6 fe80::10ed:2a48:98c1:bb89.52623: 2 KB received, 2 KB sent
-ipv6 fe80::101c:769f:fb99:73e7.59552 -> ipv6 fe80::10ed:2a48:98c1:bb89.53346: 2 KB received, 885 bytes sent
-ipv4 240.0.0.1:60526 -> ipv4 240.0.0.3:6152: 680 bytes received, 820 bytes sent
-ipv4 240.0.0.1:60527 -> ipv4 240.0.0.3:6152: 310 bytes received, 876 bytes sent
-??? -> ???: Zero KB received, Zero KB sent
-ipv6 2409:8800:9209:40b8:18f6:72a:79f9:43af.64342 -> ipv6 ::.*: Zero KB received, Zero KB sent
-ipv6 2409:8800:9209:40b8:18f6:72a:79f9:43af.5060 -> ipv6 ::.*: Zero KB received, Zero KB sent
-ipv6 2409:8800:9209:40b8:18f6:72a:79f9:43af.64341 -> ipv6 ::.*: Zero KB received, 80 KB sent
-ipv6 2409:8800:9209:40b8:18f6:72a:79f9:43af.5060 -> ipv6 ::.*: Zero KB received, Zero KB sent
-
-Instrument: Energy Usage Log (com.apple.xray.power.mobile.energy)
-Run #2: Run 2
-0.559495-1.559495001 s: Energy Usage Level 1
-1.559495-2.559495001 s: Energy Usage Level 1
-2.559495-3.559495001 s: Energy Usage Level 1
-3.559495-4.559495001 s: Energy Usage Level 1
-4.559495-5.559495001 s: Energy Usage Level 1
-5.559495-6.559495001 s: Energy Usage Level 1
-6.559495-7.559495001 s: Energy Usage Level 1
-7.559495-8.559495001 s: Energy Usage Level 1
-8.559495-9.559495001 s: Energy Usage Level 1
-9.559495-10.559495001 s: Energy Usage Level 1
-10.559495-11.559495001 s: Energy Usage Level 1
-11.559495-12.559495001 s: Energy Usage Level 1
-12.559495-13.559495001 s: Energy Usage Level 1
-13.559495-14.559495001 s: Energy Usage Level 1
-14.559495-15.559495001 s: Energy Usage Level 1
-15.559495-16.559495 s: Energy Usage Level 1
-16.559494999-17.559495001 s: Energy Usage Level 1
-17.559495-18.559495001 s: Energy Usage Level 1
-18.559495-19.559495001 s: Energy Usage Level 1
-19.559495-20.559495001 s: Energy Usage Level 1
-20.559495-21.559495001 s: Energy Usage Level 1
-21.559495-22.559495001 s: Energy Usage Level 1
-22.559495-23.559495001 s: Energy Usage Level 1
-23.559495-24.559495001 s: Energy Usage Level 1
-24.559495-25.559495001 s: Energy Usage Level 1
-25.559495-25.559495 s: Energy Usage Level 1
+Wi-Fi tcp4 xxx:xxx<->xxx:xxx, 0 Bytes in, 64 Bytes out
+Wi-Fi tcp4 xxx:xxx<->xxx:xxx, 0 Bytes in, 0 Bytes out
+Wi-Fi upd4 xxx:xxx<->xxx:xxx, 227 Bytes in, 35 Bytes out
+Wi-Fi tcp4 xxx:xxx<->xxx:xxx, 744 Bytes in, 0 Bytes out
 ```

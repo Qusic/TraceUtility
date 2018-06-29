@@ -64,22 +64,6 @@ int main(int argc, const char * argv[]) {
         for (XRInstrument *instrument in trace.allInstrumentsList.allInstruments) {
             TUPrint(@"\nInstrument: %@ (%@)\n", instrument.type.name, instrument.type.uuid);
 
-            // Common routine to obtain contexts for the instrument.
-            NSMutableArray<XRContext *> *contexts = [NSMutableArray array];
-            if (![instrument isKindOfClass:XRLegacyInstrument.class]) {
-                XRAnalysisCoreStandardController *standardController = [[XRAnalysisCoreStandardController alloc]initWithInstrument:instrument document:document];
-                instrument.viewController = standardController;
-                [standardController instrumentDidChangeSwitches];
-                [standardController instrumentChangedTableRequirements];
-                XRAnalysisCoreDetailViewController *detailController = TUIvar(standardController, _detailController);
-                [detailController restoreViewState];
-                XRAnalysisCoreDetailNode *detailNode = TUIvar(detailController, _firstNode);
-                while (detailNode) {
-                    [contexts addObject:XRContextFromDetailNode(detailController, detailNode)];
-                    detailNode = detailNode.nextSibling;
-                }
-            }
-
             // Each instrument can have multiple runs.
             NSArray<XRRun *> *runs = instrument.allRuns;
             if (runs.count == 0) {
@@ -89,6 +73,22 @@ int main(int argc, const char * argv[]) {
             for (XRRun *run in runs) {
                 TUPrint(@"Run #%@: %@\n", @(run.runNumber), run.displayName);
                 instrument.currentRun = run;
+
+                // Common routine to obtain contexts for the instrument.
+                NSMutableArray<XRContext *> *contexts = [NSMutableArray array];
+                if (![instrument isKindOfClass:XRLegacyInstrument.class]) {
+                    XRAnalysisCoreStandardController *standardController = [[XRAnalysisCoreStandardController alloc]initWithInstrument:instrument document:document];
+                    instrument.viewController = standardController;
+                    [standardController instrumentDidChangeSwitches];
+                    [standardController instrumentChangedTableRequirements];
+                    XRAnalysisCoreDetailViewController *detailController = TUIvar(standardController, _detailController);
+                    [detailController restoreViewState];
+                    XRAnalysisCoreDetailNode *detailNode = TUIvar(detailController, _firstNode);
+                    while (detailNode) {
+                        [contexts addObject:XRContextFromDetailNode(detailController, detailNode)];
+                        detailNode = detailNode.nextSibling;
+                    }
+                }
 
                 // Different instruments can have different data structure.
                 // Here are some straightforward example code demonstrating how to process the data from several commonly used instruments.

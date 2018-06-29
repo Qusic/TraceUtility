@@ -134,7 +134,7 @@ int main(int argc, const char * argv[]) {
                     byteFormatter.countStyle = NSByteCountFormatterCountStyleBinary;
                     for (NSNumber *time in sortedTime) {
                         NSString *size = [byteFormatter stringForObjectValue:sizeGroupedByTime[time]];
-                        TUPrint(@"#%@ %@\n", time, size);
+                        TUPrint(@"%@ %@\n", time, size);
                     }
                 } else if ([instrumentID isEqualToString:@"com.apple.dt.coreanimation-fps"]) {
                     // Core Animation FPS: print out all FPS data samples.
@@ -149,55 +149,45 @@ int main(int argc, const char * argv[]) {
                             while (XRAnalysisCoreReadCursorNext(cursor)) {
                                 BOOL result = NO;
                                 XRAnalysisCoreValue *object = nil;
-                                // 4 columns: Interval, Duration, Frames Per Second, GPU Hardware Utilization
                                 result = XRAnalysisCoreReadCursorGetValue(cursor, 0, &object);
-                                NSString *timestamp = [formatter stringForObjectValue:object];
+                                NSString *timestamp = result ? [formatter stringForObjectValue:object] : @"";
                                 result = XRAnalysisCoreReadCursorGetValue(cursor, 2, &object);
                                 double fps = result ? [object.objectValue doubleValue] : 0;
                                 result = XRAnalysisCoreReadCursorGetValue(cursor, 3, &object);
                                 double gpu = result ? [object.objectValue doubleValue] : 0;
-                                TUPrint(@"#%@ %2.0f FPS %4.1f%% GPU\n", timestamp, fps, gpu);
+                                TUPrint(@"%@ %2.0f FPS %4.1f%% GPU\n", timestamp, fps, gpu);
                             }
                         }];
                     }];
-                } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.networking"]) {
-                    // Connections: print out all connections.
-//                    XRNetworkingInstrument *networkingInstrument = (XRNetworkingInstrument *)instrument;
-//                    // 3 contexts: Processes, Connections, Interfaces.
-//                    [TUIvarCast(networkingInstrument, _topLevelContexts, XRContext * const *)[1] display];
-//                    [networkingInstrument selectedRunRecomputeSummaries];
-//                    NSArrayController *arrayController = TUIvarCast(networkingInstrument, _controllersByTable, NSArrayController * const *)[1]; // The same index as for contexts.
-//                    XRNetworkAddressFormatter *localAddressFormatter = TUIvar(networkingInstrument, _localAddrFmtr);
-//                    XRNetworkAddressFormatter *remoteAddressFormatter = TUIvar(networkingInstrument, _remoteAddrFmtr);
-//                    NSByteCountFormatter *byteFormatter = [[NSByteCountFormatter alloc]init];
-//                    byteFormatter.countStyle = NSByteCountFormatterCountStyleBinary;
-//                    for (NSDictionary *entry in arrayController.arrangedObjects) {
-//                        NSString *localAddress = [localAddressFormatter stringForObjectValue:entry[@"localAddr"]];
-//                        NSString *remoteAddress = [remoteAddressFormatter stringForObjectValue:entry[@"remoteAddr"]];
-//                        NSString *inSize = [byteFormatter stringForObjectValue:entry[@"totalRxBytes"]];
-//                        NSString *outSize = [byteFormatter stringForObjectValue:entry[@"totalTxBytes"]];
-//                        TUPrint(@"%@ -> %@: %@ received, %@ sent\n", localAddress, remoteAddress, inSize, outSize);
-//                    }
-                } else if ([instrumentID isEqualToString:@"com.apple.xray.power.mobile.energy"]) {
-                    // Energy Usage Log: print out all energy usage level data.
-//                    XRStreamedPowerInstrument *powerInstrument = (XRStreamedPowerInstrument *)instrument;
-//                    // 2 contexts: Energy Consumption, Power Source Events
-//                    [powerInstrument._permittedContexts[0] display];
-//                    UInt64 columnCount = powerInstrument.definitionForCurrentDetailView.columnsInDataStreamCount;
-//                    UInt64 rowCount = powerInstrument.selectedEventTimeline.count;
-//                    XRPowerDetailController *powerDetail = TUIvar(powerInstrument, _detailController);
-//                    for (UInt64 row = 0; row < rowCount; row++) {
-//                        XRPowerDatum *datum = [powerDetail datumAtObjectIndex:row];
-//                        NSMutableString *string = [NSMutableString string];
-//                        [string appendFormat:@"%@-%@ s: ", @((double)datum.time.start / NSEC_PER_SEC), @((double)(datum.time.start + datum.time.length) / NSEC_PER_SEC)];
-//                        for (UInt64 column = 0; column < columnCount; column++) {
-//                            if (column > 0) {
-//                                [string appendString:@", "];
-//                            }
-//                            [string appendFormat:@"%@ %@", [datum labelForColumn:column], [datum objectValueForColumn:column]];
-//                        }
-//                        TUPrint(@"%@\n", string);
-//                    }
+                } else if ([instrumentID isEqualToString:@"com.apple.dt.network-connections"]) {
+                    // Connections: print out connection history with protocol, addresses and bytes transferred.
+                    // 4 contexts: Summary By Process, Summary By Interface, History, Active Connections
+                    XRContext *context = contexts[2];
+                    [context display];
+                    XRAnalysisCoreTableViewController *controller = TUIvar(context.container, _tabularViewController);
+                    XRAnalysisCorePivotArray *array = controller._currentResponse.content.rows;
+                    XREngineeringTypeFormatter *formatter = TUIvarCast(array.source, _filter, XRAnalysisCoreTableQuery * const).fullTextSearchSpec.formatter;
+                    [array access:^(XRAnalysisCorePivotArrayAccessor *accessor) {
+                        [accessor readRowsStartingAt:0 dimension:0 block:^(XRAnalysisCoreReadCursor *cursor) {
+                            while (XRAnalysisCoreReadCursorNext(cursor)) {
+                                BOOL result = NO;
+                                XRAnalysisCoreValue *object = nil;
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 4, &object);
+                                NSString *interface = result ? [formatter stringForObjectValue:object] : @"";
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 5, &object);
+                                NSString *protocol = result ? [formatter stringForObjectValue:object] : @"";
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 6, &object);
+                                NSString *local = result ? [formatter stringForObjectValue:object] : @"";
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 7, &object);
+                                NSString *remote = result ? [formatter stringForObjectValue:object] : @"";
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 10, &object);
+                                NSString *bytesIn = result ? [formatter stringForObjectValue:object] : @"";
+                                result = XRAnalysisCoreReadCursorGetValue(cursor, 12, &object);
+                                NSString *bytesOut = result ? [formatter stringForObjectValue:object] : @"";
+                                TUPrint(@"%@ %@ %@<->%@, %@ in, %@ out\n", interface, protocol, local, remote, bytesIn, bytesOut);
+                            }
+                        }];
+                    }];
                 } else {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
                 }

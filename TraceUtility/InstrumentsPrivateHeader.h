@@ -253,6 +253,24 @@ BOOL XRAnalysisCoreReadCursorGetValue(XRAnalysisCoreReadCursor *cursor, UInt8 co
 - (NSArray<XRContext *> *)_permittedContexts;
 @end
 
+@interface XRVMInstrument : XRInstrument
+- (BOOL)_refreshDataSources;
+@end
+
+@interface XRVMRegion : NSObject
+- (NSString *)displayType;
+- (unsigned long long)pageSize;
+- (unsigned long long)swappedSize;
+- (unsigned long long)dirtySize;
+- (unsigned long long)residentSize;
+- (unsigned int)virtualPages;
+- (unsigned long long)virtualSize;
+- (unsigned long long)location;
+@end
+
+@interface XRVMCoalescedRegion : XRVMRegion
+@end
+
 @interface XRRawBacktrace : NSObject
 @end
 

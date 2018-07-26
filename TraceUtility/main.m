@@ -188,8 +188,22 @@ int main(int argc, const char * argv[]) {
                             }
                         }];
                     }];
+                } if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.vmtrack"]) {
+                    XRVMInstrument *vm = (XRVMInstrument *)instrument;
+                    [vm _refreshDataSources];
+                    NSArray *displayArray = [vm valueForKey:@"_displayArray"];
+                    if (displayArray && displayArray.count > 0) {
+                        TUPrint(@"Type Resident(byte) Dirty(byte) Swapped(byte) Virtual(byte) \n");
+                    }
+                    [displayArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ( [obj isKindOfClass:XRVMCoalescedRegion.class] ) {
+                            XRVMCoalescedRegion *region = (XRVMCoalescedRegion *)obj;
+                            TUPrint(@"\"%@\" %@ %@ %@ %@ \n", region.displayType ? region.displayType : [region valueForKey:@"_groupName"],
+                                    @(region.residentSize), @(region.dirtySize), @(region.swappedSize), @(region.virtualSize));
+                        }
+                    }];
                 } else {
-                    TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
+                    TUPrint(@"Data processor has not been implemented for(%@) this type of instrument.\n", instrumentID);
                 }
 
                 // Common routine to cleanup after done.

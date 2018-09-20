@@ -188,6 +188,33 @@ int main(int argc, const char * argv[]) {
                             }
                         }];
                     }];
+                } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.activity"]) {
+                    // Activity Monitor
+                    XRContext *context = contexts[0];
+                    [context display];
+                    XRAnalysisCoreTableViewController *controller = TUIvar(context.container, _tabularViewController);
+                    XRTime duration = run.timeRange.length;
+                    for (XRTime time = 0; time < duration; time += NSEC_PER_SEC) {
+                        [controller setDocumentInspectionTime:time];
+                        XRAnalysisCorePivotArray *array = controller._currentResponse.content.rows;
+                        XREngineeringTypeFormatter *formatter = TUIvarCast(array.source, _filter, XRAnalysisCoreTableQuery * const).fullTextSearchSpec.formatter;
+                        [array access:^(XRAnalysisCorePivotArrayAccessor *accessor) {
+                            [accessor readRowsStartingAt:0 dimension:0 block:^(XRAnalysisCoreReadCursor *cursor) {
+                                SInt64 columnCount = XRAnalysisCoreReadCursorColumnCount(cursor);
+                                while (XRAnalysisCoreReadCursorNext(cursor)) {
+                                    BOOL result = NO;
+                                    XRAnalysisCoreValue *object = nil;
+                                    NSMutableString *string = [NSMutableString string];
+                                    for (SInt64 column = 0; column < columnCount; column++) {
+                                        result = XRAnalysisCoreReadCursorGetValue(cursor, column, &object);
+                                        [string appendString:result ? [formatter stringForObjectValue:object] : @""];
+                                        [string appendFormat:@", "];
+                                    }
+                                    TUPrint(@"%@", string);
+                                }
+                            }];
+                        }];
+                    }
                 } else {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
                 }

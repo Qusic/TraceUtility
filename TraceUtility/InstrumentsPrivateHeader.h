@@ -288,3 +288,27 @@ BOOL XRAnalysisCoreReadCursorGetValue(XRAnalysisCoreReadCursor *cursor, UInt8 co
 }
 - (NSArray<XRContext *> *)_topLevelContexts;
 @end
+
+// MARK: - Memory leaks
+
+@interface XRLeaksRun : XRRun
+- (NSArray *)allLeaks;
+@end
+
+@interface DVT_VMUClassInfo : NSObject
+- (NSString *)remoteClassName;
+- (NSString *)genericInfo;
+- (UInt32)instanceSize;
+@end
+
+@interface XRLeak : NSObject
+- (NSString *) name;
+- (unsigned long) size;
+- (unsigned long) count;
+- (BOOL) inCycle;
+- (BOOL) isRootLeak;
+- (unsigned long long) allocationTimestamp;
+- (NSString *) displayAddress;
+- (DVT_VMUClassInfo *) classInfo;
+- (DVT_VMUClassInfo *) _layout;
+@end

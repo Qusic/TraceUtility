@@ -215,6 +215,26 @@ int main(int argc, const char * argv[]) {
                             }];
                         }];
                     }
+                } else if ([instrumentID isEqualToString:@"com.apple.xray.instrument-type.homeleaks"]) {
+
+                    XRLeaksRun *leaksRun = (XRLeaksRun *)run;
+                    for (XRLeak *leak in leaksRun.allLeaks) {
+                        DVT_VMUClassInfo *dvt = TUIvar(leak, _layout);
+                        NSDictionary *parsedLeak = @{
+                            @"name": leak.name != nil ? leak.name : @"",
+                            @"description": dvt != nil && dvt.description ? dvt.description : @"",
+                            @"size": @(leak.size),
+                            @"count": @(leak.count),
+                            @"isCycle": @(leak.inCycle),
+                            @"isRootLeak": @(leak.isRootLeak),
+                            @"allocationTimestamp": @(leak.allocationTimestamp),
+                            @"displayAddress": leak.displayAddress != nil ? leak.displayAddress : @"",
+                            @"debugDescription": dvt != nil && dvt.debugDescription ? dvt.debugDescription : @"",
+                        };
+                        NSString *name = dvt != nil && dvt.description ? dvt.description : parsedLeak[@"name"];
+                        TUPrint(@"Leaked %@x times: %@", parsedLeak[@"count"], name);
+                    }
+
                 } else {
                     TUPrint(@"Data processor has not been implemented for this type of instrument.\n");
                 }

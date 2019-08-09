@@ -143,6 +143,9 @@ int main(int argc, const char * argv[]) {
                     [context display];
                     XRAnalysisCoreTableViewController *controller = TUIvar(context.container, _tabularViewController);
                     XRAnalysisCorePivotArray *array = controller._currentResponse.content.rows;
+                    if (!array) {
+                        continue;
+                    }
                     XREngineeringTypeFormatter *formatter = TUIvarCast(array.source, _filter, XRAnalysisCoreTableQuery * const).fullTextSearchSpec.formatter;
                     [array access:^(XRAnalysisCorePivotArrayAccessor *accessor) {
                         [accessor readRowsStartingAt:0 dimension:0 block:^(XRAnalysisCoreReadCursor *cursor) {
@@ -166,6 +169,9 @@ int main(int argc, const char * argv[]) {
                     [context display];
                     XRAnalysisCoreTableViewController *controller = TUIvar(context.container, _tabularViewController);
                     XRAnalysisCorePivotArray *array = controller._currentResponse.content.rows;
+                    if (!array) {
+                        continue;
+                    }
                     XREngineeringTypeFormatter *formatter = TUIvarCast(array.source, _filter, XRAnalysisCoreTableQuery * const).fullTextSearchSpec.formatter;
                     [array access:^(XRAnalysisCorePivotArrayAccessor *accessor) {
                         [accessor readRowsStartingAt:0 dimension:0 block:^(XRAnalysisCoreReadCursor *cursor) {
@@ -197,6 +203,9 @@ int main(int argc, const char * argv[]) {
                     for (XRTime time = 0; time < duration; time += NSEC_PER_SEC) {
                         [controller setDocumentInspectionTime:time];
                         XRAnalysisCorePivotArray *array = controller._currentResponse.content.rows;
+                        if (!array) {
+                            continue;
+                        }
                         XREngineeringTypeFormatter *formatter = TUIvarCast(array.source, _filter, XRAnalysisCoreTableQuery * const).fullTextSearchSpec.formatter;
                         [array access:^(XRAnalysisCorePivotArrayAccessor *accessor) {
                             [accessor readRowsStartingAt:0 dimension:0 block:^(XRAnalysisCoreReadCursor *cursor) {

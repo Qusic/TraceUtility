@@ -1,3 +1,13 @@
+This is an outdated POC and I won't update it.
+Please try the new command line tool `xctrace` from Xcode 12.
+Quoted from the [release notes](https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes):
+
+> # Instruments
+> ## New Features
+> * You can now export Analysis Core Tables from existing Instruments .trace files using the xctrace command. See the xctrace man page for more details. (12491801)
+
+---
+
 # TraceUtility
 
 *Works with Instruments.app bundled in Xcode 9.4*
